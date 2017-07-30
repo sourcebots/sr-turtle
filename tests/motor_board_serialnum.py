@@ -4,7 +4,7 @@ from sb.robot import Simulator
 try:
     sim = Simulator(num_tokens=5)
 except NameError:
-        print("This script must be run with `python -m` (i.e. `python -m tests.motor_board_serialnum`)")
+    print("This script must be run with `python -m` (i.e. `python -m tests.motor_board_serialnum`)")
 
 R = SimRobot(sim)
 

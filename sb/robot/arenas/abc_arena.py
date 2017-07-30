@@ -5,6 +5,7 @@ from .arena import Arena, draw_triangular_corner_zones
 from ..markers import Token
 from ..vision import MARKER_TOKEN_A, MARKER_TOKEN_B, MARKER_TOKEN_C
 
+
 def token_positions(separation):
     """
     Iterate over a 3x3 grid of positions, centered at the middle of the arena
@@ -17,16 +18,17 @@ def token_positions(separation):
         for y_pos in offsets:
             yield x_pos, y_pos
 
+
 class ABCArena(Arena):
     start_locations = [(-3.6, -3.6),
-                       ( 3.6, -3.6),
-                       ( 3.6,  3.6),
+                       (3.6, -3.6),
+                       (3.6,  3.6),
                        (-3.6,  3.6)]
 
-    start_headings = [0.25*pi,
-                      0.75*pi,
-                      -0.75*pi,
-                      -0.25*pi]
+    start_headings = [0.25 * pi,
+                      0.75 * pi,
+                      -0.75 * pi,
+                      -0.25 * pi]
 
     starting_zone_side = 1
     scoring_zone_side = 2

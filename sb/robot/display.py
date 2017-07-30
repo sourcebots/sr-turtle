@@ -7,11 +7,13 @@ PIXELS_PER_METER = 100
 
 sprites = {}
 
+
 def get_surface(name):
     if name not in sprites:
         sprites[name] = pygame.image.load(name).convert_alpha()
 
     return sprites[name]
+
 
 class Display(object):
     def __init__(self, arena):
@@ -58,10 +60,11 @@ class Display(object):
         self._draw()
 
     def to_pixel_coord(self, world_coord, arena=None):
-        if arena is None: arena = self.arena
+        if arena is None:
+            arena = self.arena
         offset_x = arena.size[0] / 2
         offset_y = arena.size[1] / 2
         x, y = world_coord
-        x, y = ((x + offset_x) * PIXELS_PER_METER, (y + offset_y) * PIXELS_PER_METER)
+        x, y = ((x + offset_x) * PIXELS_PER_METER,
+                (y + offset_y) * PIXELS_PER_METER)
         return (x, y)
-

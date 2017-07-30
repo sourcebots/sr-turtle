@@ -24,23 +24,28 @@ CORNER_COLOURS = (
     (0xff, 0xff, 0x00),
 )
 
+
 def towards_zero(point, dist):
     if point < 0:
         return point + dist
     else:
         return point - dist
 
+
 def apply_transparency(foreground, background, opacity):
     def helper(fore, back):
-        return back + (fore-back)*opacity
+        return back + (fore - back) * opacity
     return tuple(map(helper, foreground, background))
 
-def fade_to_white(colour, opacity = 0.6):
+
+def fade_to_white(colour, opacity=0.6):
     white = (0xff,) * 3
     return apply_transparency(colour, white, opacity)
 
+
 def lerp(delta, a, b):
-    return delta*b + (1-delta)*a
+    return delta * b + (1 - delta) * a
+
 
 def draw_triangular_corner_zones(arena, display, surface):
     """
@@ -52,7 +57,7 @@ def draw_triangular_corner_zones(arena, display, surface):
 
     # Lines separating zones
     def line(start, end):
-        pygame.draw.line(surface, ARENA_MARKINGS_COLOR, \
+        pygame.draw.line(surface, ARENA_MARKINGS_COLOR,
                          start, end, ARENA_MARKINGS_WIDTH)
 
     def starting_zone(corner_pos):
@@ -79,6 +84,7 @@ def draw_triangular_corner_zones(arena, display, surface):
         scoring_zone(pos, colour)
         starting_zone(pos)
 
+
 class Arena(object):
     size = (8, 8)
     start_locations = [(0, 0)]
@@ -89,12 +95,15 @@ class Arena(object):
     @property
     def left(self):
         return -self.size[0] / 2
+
     @property
     def right(self):
         return self.size[0] / 2
+
     @property
     def top(self):
         return -self.size[1] / 2
+
     @property
     def bottom(self):
         return self.size[1] / 2
@@ -118,17 +127,17 @@ class Arena(object):
 
     def _populate_wall_markers(self):
         # Left wall
-        self._populate_wall(left = (self.left, self.bottom), right = (self.left, self.top),
-                            count = MARKERS_PER_WALL, start = 3*MARKERS_PER_WALL, angle = 0)
+        self._populate_wall(left=(self.left, self.bottom), right=(self.left, self.top),
+                            count=MARKERS_PER_WALL, start=3 * MARKERS_PER_WALL, angle=0)
         # Right wall
-        self._populate_wall(left = (self.right, self.top), right = (self.right, self.bottom),
-                            count = MARKERS_PER_WALL, start = MARKERS_PER_WALL, angle = pi)
+        self._populate_wall(left=(self.right, self.top), right=(self.right, self.bottom),
+                            count=MARKERS_PER_WALL, start=MARKERS_PER_WALL, angle=pi)
         # Bottom wall
-        self._populate_wall(left = (self.right, self.bottom), right = (self.left, self.bottom),
-                            count = MARKERS_PER_WALL, start = 2*MARKERS_PER_WALL, angle = pi / 2)
+        self._populate_wall(left=(self.right, self.bottom), right=(self.left, self.bottom),
+                            count=MARKERS_PER_WALL, start=2 * MARKERS_PER_WALL, angle=pi / 2)
         # Top wall
-        self._populate_wall(left = (self.left, self.top), right = (self.right, self.top),
-                            count = MARKERS_PER_WALL, start = 0, angle = 3*pi / 2)
+        self._populate_wall(left=(self.left, self.top), right=(self.right, self.top),
+                            count=MARKERS_PER_WALL, start=0, angle=3 * pi / 2)
 
     def _init_physics(self):
         self._physics_world = pypybox2d.world.World(gravity=(0, 0))
@@ -163,7 +172,7 @@ class Arena(object):
                                         **WALL_SETTINGS)
 
         wall_bottom = self._physics_world.create_body(position=(0, self.bottom),
-                                                   type=pypybox2d.body.Body.STATIC)
+                                                      type=pypybox2d.body.Body.STATIC)
         wall_bottom.create_polygon_fixture([(self.left, 0),
                                             (self.right, 0),
                                             (self.right, WALL_WIDTH),

@@ -1,7 +1,6 @@
 #!/usr/bin/python2.7
 
 
-
 import time
 from math import pi, sin, cos, degrees, hypot, atan2
 
@@ -19,9 +18,11 @@ HALF_FOV_WIDTH = pi / 6
 
 GRABBER_OFFSET = 0.25
 
+
 class AlreadyHoldingSomethingException(Exception):
     def __str__(self):
         return "The robot is already holding something."
+
 
 class MotorChannel(object):
     def __init__(self, robot):
@@ -38,6 +39,7 @@ class MotorChannel(object):
         with self._robot.lock:
             self._power = value
 
+
 class Motor:
     """Represents a motor board."""
     # This is named `Motor` instead of `MotorBoard` for consistency with pyenv
@@ -52,6 +54,7 @@ class Motor:
     def __repr__(self):
         return "Motor( serialnum = \"{0}\" ) (Simulated Motor Board v4)" \
                .format(self.serialnum)
+
 
 class SimRobot(GameObject):
     width = 0.45
@@ -70,7 +73,7 @@ class SimRobot(GameObject):
     @location.setter
     def location(self, new_pos):
         if self._body is None:
-            return # Slight hack: deal with the initial setting from the constructor
+            return  # Slight hack: deal with the initial setting from the constructor
         with self.lock:
             self._body.position = new_pos
 
@@ -82,7 +85,7 @@ class SimRobot(GameObject):
     @heading.setter
     def heading(self, _new_heading):
         if self._body is None:
-            return # Slight hack: deal with the initial setting from the constructor
+            return  # Slight hack: deal with the initial setting from the constructor
         with self.lock:
             self._body.angle = _new_heading
 
@@ -104,12 +107,11 @@ class SimRobot(GameObject):
                                    angular_damping=0.0,
                                    type=pypybox2d.body.Body.DYNAMIC)
             self._body.create_polygon_fixture([(-half_width, -half_width),
-                                               ( half_width, -half_width),
-                                               ( half_width,  half_width),
+                                               (half_width, -half_width),
+                                               (half_width,  half_width),
                                                (-half_width,  half_width)],
-                                              density=500*0.12) # MDF @ 12cm thickness
+                                              density=500 * 0.12)  # MDF @ 12cm thickness
         simulator.arena.objects.append(self)
-
 
     ## Internal methods ##
 
@@ -117,7 +119,8 @@ class SimRobot(GameObject):
         location_world_space = self._body.get_world_point((0, y_position))
         force_magnitude = power * 0.6
         # account for friction
-        frict_world = self._body.get_linear_velocity_from_local_point((0, y_position))
+        frict_world = self._body.get_linear_velocity_from_local_point(
+            (0, y_position))
         frict_x, frict_y = self._body.get_local_vector(frict_world)
         force_magnitude -= frict_x * 50.2
         force_world_space = (force_magnitude * cos(self.heading),
@@ -132,7 +135,7 @@ class SimRobot(GameObject):
             # left wheel
             self._apply_wheel_force(-half_width, self.motors[0].m0.power)
             # right wheel
-            self._apply_wheel_force( half_width, self.motors[0].m1.power)
+            self._apply_wheel_force(half_width, self.motors[0].m1.power)
             # kill the lateral velocity
             right_normal = self._body.get_world_vector((0, 1))
             lateral_vel = (right_normal.dot(self._body.linear_velocity) *
@@ -165,7 +168,8 @@ class SimRobot(GameObject):
                 with self.lock, self.arena.physics_lock:
                     self._holding_joint = self._body._world.create_weld_joint(self._body,
                                                                               self._holding._body,
-                                                                              local_anchor_a=(GRABBER_OFFSET, 0),
+                                                                              local_anchor_a=(
+                                                                                  GRABBER_OFFSET, 0),
                                                                               local_anchor_b=(0, 0))
             self._holding.grab()
             return True
@@ -184,7 +188,7 @@ class SimRobot(GameObject):
         else:
             return False
 
-    def see(self, res=(800,600)):
+    def see(self, res=(800, 600)):
         with self.lock:
             x, y = self.location
             heading = self.heading
@@ -215,7 +219,7 @@ class SimRobot(GameObject):
         def marker_map(o):
             # Turn a marked object into a Marker
             rel_x, rel_y = (o.location[0] - x, o.location[1] - y)
-            polar_coord = PolarCoord(length=hypot(rel_x, rel_y), \
+            polar_coord = PolarCoord(length=hypot(rel_x, rel_y),
                                      rot_y=degrees(atan2(rel_y, rel_x) - heading))
             # TODO: Check polar coordinates are the right way around
             return Marker(info=o.marker_info,
@@ -224,4 +228,3 @@ class SimRobot(GameObject):
                           timestamp=acq_time)
 
         return [marker_map(obj) for obj in self.arena.objects if object_filter(obj)]
-

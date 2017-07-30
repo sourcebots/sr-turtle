@@ -13,21 +13,25 @@ parser.add_argument('robot_scripts',
                     nargs='*')
 args = parser.parse_args()
 
+
 def read_file(fn):
     with open(fn, 'r') as f:
         return f.read()
+
 
 robot_scripts = args.robot_scripts
 prompt = "Enter the names of the Python files to run, separated by commas: "
 while not robot_scripts:
     robot_script_names = input(prompt).split(',')
-    if robot_script_names == ['']: continue
+    if robot_script_names == ['']:
+        continue
     robot_scripts = [read_file(s.strip()) for s in robot_script_names]
 
 with args.config as f:
     config = yaml.load(f)
 
 sim = Simulator(config, background=False)
+
 
 class RobotThread(threading.Thread):
     def __init__(self, zone, script, *args, **kwargs):
@@ -47,6 +51,7 @@ class RobotThread(threading.Thread):
 
         exec(self.script in {'Robot': robot})
 
+
 threads = []
 for zone, robot in enumerate(robot_scripts):
     thread = RobotThread(zone, robot)
@@ -59,7 +64,8 @@ sim.run()
 # threads won't actually have gone away. See commit 8cad7add for more details.
 threads = [t for t in threads if t.is_alive()]
 if threads:
-    print(("WARNING: {0} robot code threads still active.".format(len(threads))))
+    print(
+        ("WARNING: {0} robot code threads still active.".format(len(threads))))
     #####                                                               #####
     # If you see the above warning in PyScripter and you want to kill your  #
     # robot code you can press Ctrl+F2 to re-initialize the interpreter and #

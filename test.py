@@ -8,7 +8,9 @@ R = Robot()
 
 MARKER_TOKENS = (MARKER_TOKEN, MARKER_TOKEN_A, MARKER_TOKEN_B, MARKER_TOKEN_C)
 
-token_filter = lambda m: m.info.marker_type in MARKER_TOKENS
+
+def token_filter(m): return m.info.marker_type in MARKER_TOKENS
+
 
 def drive(speed, seconds):
     R.motors[0].m0.power = speed
@@ -17,12 +19,14 @@ def drive(speed, seconds):
     R.motors[0].m0.power = 0
     R.motors[0].m1.power = 0
 
+
 def turn(speed, seconds):
     R.motors[0].m0.power = speed
     R.motors[0].m1.power = -speed
     time.sleep(seconds)
     R.motors[0].m0.power = 0
     R.motors[0].m1.power = 0
+
 
 state = SEARCHING
 
@@ -32,7 +36,7 @@ while True:
         tokens = list(filter(token_filter, R.see()))
         if len(tokens) > 0:
             m = tokens[0]
-            print("Token sighted. {0} is {1}m away, bearing {2} degrees." \
+            print("Token sighted. {0} is {1}m away, bearing {2} degrees."
                   .format(m.info.offset, m.dist, m.rot_y))
             state = DRIVING
 
@@ -71,4 +75,4 @@ while True:
 
             elif m.rot_y > 15:
                 print("Right a bit...")
-                turn (12.5, 0.5)
+                turn(12.5, 0.5)

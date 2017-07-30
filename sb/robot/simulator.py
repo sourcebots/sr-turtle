@@ -10,7 +10,8 @@ GAMES = {'pirate-plunder': PiratePlunderArena,
          'ctf': CTFArena,
          'sunny-side-up': SunnySideUpArena,
          'abc': ABCArena,
-        }
+         }
+
 
 class Simulator(object):
     def __init__(self, config={}, size=(8, 8), frames_per_second=30, background=True):
@@ -28,13 +29,15 @@ class Simulator(object):
         self.frames_per_second = frames_per_second
 
         if self.background:
-            self._loop_thread = threading.Thread(target=self._main_loop, args=(frames_per_second,))
+            self._loop_thread = threading.Thread(
+                target=self._main_loop, args=(frames_per_second,))
             self._loop_thread.setDaemon(True)
             self._loop_thread.start()
 
     def run(self):
         if self.background:
-            raise RuntimeError('Simulator runs in the background. Try passing background=False')
+            raise RuntimeError(
+                'Simulator runs in the background. Try passing background=False')
         self._main_loop(self.frames_per_second)
 
     def _main_loop(self, frames_per_second):
@@ -46,7 +49,7 @@ class Simulator(object):
                     for event in pygame.event.get()):
                 break
 
-            self.display.tick(1/frames_per_second)
+            self.display.tick(1 / frames_per_second)
             clock.tick(frames_per_second)
 
         pygame.quit()

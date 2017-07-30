@@ -10,6 +10,7 @@ from ..game_object import GameObject
 
 import pypybox2d
 
+
 class CTFWall(GameObject):
     @property
     def location(self):
@@ -18,7 +19,7 @@ class CTFWall(GameObject):
     @location.setter
     def location(self, new_pos):
         if self._body is None:
-            return # Slight hack: deal with the initial setting from the constructor
+            return  # Slight hack: deal with the initial setting from the constructor
         self._body.position = new_pos
 
     @property
@@ -28,7 +29,7 @@ class CTFWall(GameObject):
     @heading.setter
     def heading(self, _new_heading):
         if self._body is None:
-            return # Slight hack: deal with the initial setting from the constructor
+            return  # Slight hack: deal with the initial setting from the constructor
         self._body.angle = _new_heading
 
     def __init__(self, arena):
@@ -36,8 +37,8 @@ class CTFWall(GameObject):
                                                       angle=0,
                                                       type=pypybox2d.body.Body.STATIC)
         self._body.create_polygon_fixture([(-0.75, -0.15),
-                                           ( 0.75, -0.15),
-                                           ( 0.75,  0.15),
+                                           (0.75, -0.15),
+                                           (0.75,  0.15),
                                            (-0.75,  0.15)],
                                           restitution=0.2,
                                           friction=0.3)
@@ -45,16 +46,17 @@ class CTFWall(GameObject):
 
     surface_name = 'sb/wall.png'
 
+
 class CTFArena(Arena):
     start_locations = [(-3.6, -3.6),
-                       ( 3.6, -3.6),
-                       ( 3.6,  3.6),
+                       (3.6, -3.6),
+                       (3.6,  3.6),
                        (-3.6,  3.6)]
 
-    start_headings = [0.25*pi,
-                      0.75*pi,
-                      -0.75*pi,
-                      -0.25*pi]
+    start_headings = [0.25 * pi,
+                      0.75 * pi,
+                      -0.75 * pi,
+                      -0.25 * pi]
 
     def __init__(self, objects=None, wall_markers=True, zone_flags=True):
         super(CTFArena, self).__init__(objects, wall_markers)
@@ -64,24 +66,24 @@ class CTFArena(Arena):
     def _init_tokens(self, zone_flags):
         if zone_flags:
             token_locations = [(-3.2, -3.2),
-                               ( 3.2, -3.2),
-                               ( 3.2,  3.2),
+                               (3.2, -3.2),
+                               (3.2,  3.2),
                                (-3.2,  3.2),
-                               (   0,    0)]
+                               (0,    0)]
         else:
             token_locations = [(0, 0)]
 
         for i, location in enumerate(token_locations):
             token = Token(self, i, damping=0.5)
             token.location = location
-            token.heading = pi/4
+            token.heading = pi / 4
             self.objects.append(token)
 
     def _init_walls(self):
         wall_settings = [(-2.25, 0, 0),
                          (2.25, 0, 0),
-                         (0, 2.25, pi/2),
-                         (0, -2.25, pi/2)]
+                         (0, 2.25, pi / 2),
+                         (0, -2.25, pi / 2)]
         for x, y, rotation in wall_settings:
             wall = CTFWall(self)
             wall.location = (x, y)
@@ -93,7 +95,8 @@ class CTFArena(Arena):
 
         def line(start, end):
             pygame.draw.line(surface, ARENA_MARKINGS_COLOR,
-                             display.to_pixel_coord(start), display.to_pixel_coord(end),
+                             display.to_pixel_coord(
+                                 start), display.to_pixel_coord(end),
                              ARENA_MARKINGS_WIDTH)
 
         def line_symmetric(start, end):
@@ -111,4 +114,3 @@ class CTFArena(Arena):
         line_symmetric((2, 4), (3, 3))
         line_symmetric((3, 0.15), (4, 0.15))
         line_symmetric((1.5, 0.15), (0.825, 0.825))
-

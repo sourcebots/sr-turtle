@@ -1,5 +1,6 @@
 import threading
 
+
 class GameObject(object):
     surface_name = None
     marker_info = None
@@ -12,4 +13,3 @@ class GameObject(object):
         self.heading = 0
 
         self.lock = threading.RLock()
-
