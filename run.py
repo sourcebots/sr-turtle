@@ -9,7 +9,6 @@ parser.add_argument('-c', '--config',
                     type=argparse.FileType('r'),
                     default='games/tcr.yaml')
 parser.add_argument('robot_scripts',
-                    type=argparse.FileType('r'),
                     nargs='*')
 args = parser.parse_args()
 
@@ -20,12 +19,14 @@ def read_file(fn):
 
 
 robot_scripts = args.robot_scripts
+
+# Ask if they didn't just give us them
 prompt = "Enter the names of the Python files to run, separated by commas: "
 while not robot_scripts:
     robot_script_names = input(prompt).split(',')
     if robot_script_names == ['']:
         continue
-    robot_scripts = [read_file(s.strip()) for s in robot_script_names]
+    robot_scripts = [s.strip() for s in robot_script_names]
 
 with args.config as f:
     config = yaml.load(f)
@@ -49,7 +50,7 @@ class RobotThread(threading.Thread):
                 robot_object.heading = sim.arena.start_headings[self.zone]
                 return robot_object
 
-        exec(self.script in {'Robot': robot})
+        exec(open(self.script).read(), {'Robot': robot})
 
 
 threads = []
