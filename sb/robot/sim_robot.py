@@ -222,9 +222,6 @@ class SimRobot(GameObject):
             polar_coord = PolarCoord(length=hypot(rel_x, rel_y),
                                      rot_y=degrees(atan2(rel_y, rel_x) - heading))
             # TODO: Check polar coordinates are the right way around
-            return Marker(info=o.marker_info,
-                          centre=Point(polar_coord),
-                          res=res,
-                          timestamp=acq_time)
+            return Marker()
 
         return [marker_map(obj) for obj in self.arena.objects if object_filter(obj)]

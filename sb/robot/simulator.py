@@ -1,20 +1,25 @@
 import threading
+
 import pygame
 
+from sb.robot.arenas.tin_can_rally import TCRArena
 from .arenas import PiratePlunderArena, CTFArena, SunnySideUpArena, ABCArena
 from .display import Display
 
-DEFAULT_GAME = 'pirate-plunder'
+DEFAULT_GAME = 'tin-can-rally'
 
 GAMES = {'pirate-plunder': PiratePlunderArena,
          'ctf': CTFArena,
          'sunny-side-up': SunnySideUpArena,
          'abc': ABCArena,
+         'tin-can-rally': TCRArena,
          }
 
 
 class Simulator(object):
-    def __init__(self, config={}, size=(8, 8), frames_per_second=30, background=True):
+    def __init__(self, config=None, size=(8, 8), frames_per_second=30, background=True):
+        if config is None:
+            config = dict()
         try:
             game_name = config['game']
             del config['game']

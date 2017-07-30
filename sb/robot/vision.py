@@ -53,7 +53,8 @@ MarkerBase = namedtuple("Marker", "info res centre timestamp")
 
 
 class Marker(MarkerBase):
-    def __init__(self, *a, **kwd):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         # Aliases
         self.dist = self.centre.polar.length
         self.rot_y = self.centre.polar.rot_y

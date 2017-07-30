@@ -7,7 +7,7 @@ from sb.robot import *
 parser = argparse.ArgumentParser()
 parser.add_argument('-c', '--config',
                     type=argparse.FileType('r'),
-                    default='games/abc.yaml')
+                    default='games/tcr.yaml')
 parser.add_argument('robot_scripts',
                     type=argparse.FileType('r'),
                     nargs='*')
