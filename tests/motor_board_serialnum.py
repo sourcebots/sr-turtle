@@ -1,11 +1,12 @@
-from sr import *
+from sb.robot import SimRobot
+from sb.robot import Simulator
 
 try:
     sim = Simulator(num_tokens=5)
 except NameError:
-    print "This script must be run with `python -m` (i.e. `python -m tests.motor_board_serialnum`)"
+        print("This script must be run with `python -m` (i.e. `python -m tests.motor_board_serialnum`)")
 
 R = SimRobot(sim)
 
 assert type(R.motors[0].serialnum) == str, "Motor.serialnum must be a string"
-print R.motors[0]
+print(R.motors[0])

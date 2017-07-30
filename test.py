@@ -1,8 +1,8 @@
-from sr.robot import *
+from sb.robot import *
 
 import time
 
-SEARCHING, DRIVING = range(2)
+SEARCHING, DRIVING = list(range(2))
 
 R = Robot()
 
@@ -28,47 +28,47 @@ state = SEARCHING
 
 while True:
     if state == SEARCHING:
-        print "Searching..."
-        tokens = filter(token_filter, R.see())
+        print("Searching...")
+        tokens = list(filter(token_filter, R.see()))
         if len(tokens) > 0:
             m = tokens[0]
-            print "Token sighted. {0} is {1}m away, bearing {2} degrees." \
-                  .format(m.info.offset, m.dist, m.rot_y)
+            print("Token sighted. {0} is {1}m away, bearing {2} degrees." \
+                  .format(m.info.offset, m.dist, m.rot_y))
             state = DRIVING
 
         else:
-            print "Can't see anything."
+            print("Can't see anything.")
             turn(25, 0.3)
             time.sleep(0.2)
 
     elif state == DRIVING:
-        print "Aligning..."
-        tokens = filter(token_filter, R.see())
+        print("Aligning...")
+        tokens = list(filter(token_filter, R.see()))
         if len(tokens) == 0:
             state = SEARCHING
 
         else:
             m = tokens[0]
             if m.dist < 0.4:
-                print "Found it!"
+                print("Found it!")
                 if R.grab():
-                    print "Gotcha!"
+                    print("Gotcha!")
                     turn(50, 0.5)
                     drive(50, 1)
                     R.release()
                     drive(-50, 0.5)
                 else:
-                    print "Aww, I'm not close enough."
+                    print("Aww, I'm not close enough.")
                 exit()
 
             elif -15 <= m.rot_y <= 15:
-                print "Ah, that'll do."
+                print("Ah, that'll do.")
                 drive(50, 0.5)
 
             elif m.rot_y < -15:
-                print "Left a bit..."
+                print("Left a bit...")
                 turn(-12.5, 0.5)
 
             elif m.rot_y > 15:
-                print "Right a bit..."
+                print("Right a bit...")
                 turn (12.5, 0.5)
