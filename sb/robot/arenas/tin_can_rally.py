@@ -11,7 +11,7 @@ from sb.robot.display import get_surface
 from sb.robot.markers import Token
 from ..game_object import GameObject
 
-WALL_DIAMETER_METRES = 5
+WALL_DIAMETER_METRES = 4
 
 
 class TCRWall(GameObject):
@@ -71,12 +71,12 @@ class TCRArena(Arena):
     def _init_tokens(self):
         # Clockwise from top left
         token_locations = [
-            (-0.5, -3.25),
+            (-0.5, -3),
             (3, -3),
-            (3.25, -0.5),
-            (0.5, 3.25),
+            (3, -0.5),
+            (0.5, 3),
             (-3, 3),
-            (-3.25, 0.5),
+            (-3, 0.5),
         ]
 
         for i, location in enumerate(token_locations):
@@ -114,7 +114,7 @@ class TCRArena(Arena):
             line_opposite((start_y, start_x), (end_y, end_x), **kwargs)
 
         # Section lines
-        line_symmetric((0, 2.5), (0, 4))
+        line_symmetric((0, WALL_DIAMETER_METRES/2), (0, 4))
 
         # Starting zones
         line_opposite((3, 3), (3, 4))
