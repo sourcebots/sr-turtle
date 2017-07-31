@@ -85,6 +85,37 @@ class SimRobot(GameObject):
         with self.lock:
             self._body.angle = _new_heading
 
+    def send_ultrasound_ping(self, angle_offset):
+        with self.arena.physics_lock:
+            world = self._body.world
+
+            centre_point = self._body.world_center
+
+            cast_angle = self._body.angle + angle_offset
+            cast_range = 4.0
+
+            target_point = [
+                centre_point[0] + cast_range * sin(cast_angle),
+                centre_point[1] + cast_range * cos(cast_angle),
+            ]
+
+            cast = list(world.ray_cast(centre_point, target_point))
+
+        if not cast:
+            return None
+
+        # Sort by fraction along the ray
+        cast.sort(key=lambda x: x[3])
+
+        fixture, intercept_point, _, _ = cast[0]
+
+        distance_to_intercept = hypot(
+            intercept_point[0] - centre_point[0],
+            intercept_point[1] - centre_point[1],
+        )
+
+        return distance_to_intercept
+
     def __init__(self, simulator):
         self._body = None
         self.zone = 0
