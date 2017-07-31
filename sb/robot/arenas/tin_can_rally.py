@@ -50,6 +50,56 @@ class TCRWall(GameObject):
         super().__init__(arena)
 
 
+class Token(GameObject):
+    grabbable = True
+
+    @property
+    def location(self):
+        return self._body.position
+
+    @location.setter
+    def location(self, new_pos):
+        if self._body is None:
+            return  # Slight hack: deal with the initial setting from the constructor
+        self._body.position = new_pos
+
+    @property
+    def heading(self):
+        return self._body.angle
+
+    @heading.setter
+    def heading(self, _new_heading):
+        if self._body is None:
+            return  # Slight hack: deal with the initial setting from the constructor
+        self._body.angle = _new_heading
+
+    def __init__(self, arena, number, damping):
+        self._body = arena._physics_world.create_body(position=(0, 0),
+                                                      angle=0,
+                                                      linear_damping=damping,
+                                                      angular_damping=damping,
+                                                      type=pypybox2d.body.Body.DYNAMIC)
+        super(Token, self).__init__(arena)
+        self.grabbed = False
+        WIDTH = 0.08
+        self._body.create_polygon_fixture([(-WIDTH, -WIDTH),
+                                           (WIDTH, -WIDTH),
+                                           (WIDTH,  WIDTH),
+                                           (-WIDTH,  WIDTH)],
+                                          density=1,
+                                          restitution=0.2,
+                                          friction=0.3)
+
+    def grab(self):
+        self.grabbed = True
+
+    def release(self):
+        self.grabbed = False
+
+    @property
+    def surface_name(self):
+        return 'sb/token{0}.png'.format('_grabbed' if self.grabbed else '')
+
 
 class TCRArena(Arena):
     start_locations = [(-3.6, -3.6),
