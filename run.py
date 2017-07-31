@@ -2,6 +2,15 @@ import yaml
 import threading
 import argparse
 
+# Begin Python 3 compatibility hax
+
+import functools
+import pypybox2d.shapes
+
+pypybox2d.shapes.reduce = functools.reduce
+
+# End Python 3 compatibility hax
+
 from sb.robot import *
 
 parser = argparse.ArgumentParser()
