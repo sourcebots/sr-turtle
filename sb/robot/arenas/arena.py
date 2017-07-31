@@ -1,5 +1,3 @@
-
-
 from math import pi
 
 import pygame
