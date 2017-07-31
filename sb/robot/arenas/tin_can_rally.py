@@ -8,7 +8,6 @@ import pypybox2d
 from sb.robot.arenas import Arena
 from sb.robot.arenas.arena import ARENA_MARKINGS_COLOR, ARENA_MARKINGS_WIDTH
 from sb.robot.display import get_surface
-from sb.robot.markers import Token
 from ..game_object import GameObject
 
 WALL_DIAMETER_METRES = 4
@@ -63,8 +62,8 @@ class TCRArena(Arena):
                       -0.75 * pi,
                       -0.25 * pi]
 
-    def __init__(self, objects=None, wall_markers=True):
-        super().__init__(objects, wall_markers)
+    def __init__(self, objects=None):
+        super().__init__(objects)
         self._init_walls()
         self._init_tokens()
 
