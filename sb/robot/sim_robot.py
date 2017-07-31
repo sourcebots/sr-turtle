@@ -1,6 +1,3 @@
-#!/usr/bin/python2.7
-
-
 import time
 from math import pi, sin, cos, degrees, hypot, atan2
 
