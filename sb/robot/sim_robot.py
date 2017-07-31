@@ -91,8 +91,8 @@ class SimRobot(GameObject):
 
             centre_point = self._body.world_center
 
-            spread_casts = 2
-            spread_maximum_angle_radians = 0 * radians(5)
+            spread_casts = 10
+            spread_maximum_angle_radians = radians(10)
 
             cast = []
             cast_range = 4.0
