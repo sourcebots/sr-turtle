@@ -1,3 +1,4 @@
+import six
 import yaml
 import threading
 import argparse
@@ -59,7 +60,7 @@ class RobotThread(threading.Thread):
                 robot_object.heading = sim.arena.start_headings[self.zone]
                 return robot_object
 
-        exec(open(self.script).read(), {'Robot': robot})
+        six.exec_(open(self.script).read(), {'Robot': robot})
 
 
 threads = []
