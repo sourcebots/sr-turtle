@@ -103,14 +103,10 @@ class Token(GameObject):
 
 class TCRArena(Arena):
     start_locations = [(-3.6, -3.6),
-                       (3.6, -3.6),
-                       (3.6, 3.6),
-                       (-3.6, 3.6)]
+                       (3.6, 3.6)]
 
-    start_headings = [0.25 * pi,
-                      0.75 * pi,
-                      -0.75 * pi,
-                      -0.25 * pi]
+    start_headings = [pi / 2,
+                      -pi / 2]
 
     def __init__(self, objects=None):
         super().__init__(objects)
