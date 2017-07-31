@@ -3,17 +3,17 @@ import time
 
 R = Robot()
 
-motor_board = R.motors[0]
+motor_board = R.motor_board
 
 while True:
-    distance_right = R.send_ultrasound_ping(pi / 2) or 4.0
-    distance_ahead = R.send_ultrasound_ping(0) or 4.0
+    distance_right = R.servo_board.read_ultrasound(8, 9)
+    distance_ahead = R.servo_board.read_ultrasound(6, 7)
 
     print("Forward distance: ", distance_ahead)
 
     if distance_ahead < 1.0:
-        motor_board.m0.power = -50
-        motor_board.m1.power = 50
+        motor_board.m0.voltage = -0.5
+        motor_board.m1.voltage = 0.5
         print("COLLISION AVOID")
     else:
         target_distance = 0.8
@@ -21,7 +21,7 @@ while True:
 
         print("Tracking error: ", distance_error, " - measured: ", distance_right)
 
-        motor_board.m0.power = 50
-        motor_board.m1.power = 50 - 35*distance_error
+        motor_board.m0.voltage = 0.5
+        motor_board.m1.voltage = 0.5 - .35 * distance_error
 
     time.sleep(0.1)
