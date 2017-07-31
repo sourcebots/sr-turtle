@@ -2,7 +2,6 @@ import time
 from math import pi, sin, cos, degrees, hypot, atan2
 
 from .game_object import GameObject
-from .vision import Marker, Point, PolarCoord, create_marker_info_by_type, MARKER_ROBOT
 
 import pypybox2d
 
@@ -184,41 +183,3 @@ class SimRobot(GameObject):
             return True
         else:
             return False
-
-    def see(self, res=(800, 600)):
-        with self.lock:
-            x, y = self.location
-            heading = self.heading
-
-        acq_time = time.time()
-
-        MOTION_BLUR_SPEED_THRESHOLD = 5
-
-        def robot_moving(o):
-            vx, vy = o._body.linear_velocity
-            return hypot(vx, vy) > MOTION_BLUR_SPEED_THRESHOLD
-
-        def motion_blurred(o):
-            # Simple approximation: we can't see anything if either it's moving
-            # or we're moving. This doesn't handle tokens grabbed by other robots
-            # but Sod's Law says we're likely to see those anyway.
-            return (robot_moving(self) or
-                    isinstance(o, SimRobot) and robot_moving(o))
-
-        def object_filter(o):
-            # Choose only marked objects within the field of view
-            direction = atan2(o.location[1] - y, o.location[0] - x)
-            return (o.marker_info != None and
-                    o is not self and
-                    -HALF_FOV_WIDTH < direction - heading < HALF_FOV_WIDTH and
-                    not motion_blurred(o))
-
-        def marker_map(o):
-            # Turn a marked object into a Marker
-            rel_x, rel_y = (o.location[0] - x, o.location[1] - y)
-            polar_coord = PolarCoord(length=hypot(rel_x, rel_y),
-                                     rot_y=degrees(atan2(rel_y, rel_x) - heading))
-            # TODO: Check polar coordinates are the right way around
-            return Marker()
-
-        return [marker_map(obj) for obj in self.arena.objects if object_filter(obj)]
