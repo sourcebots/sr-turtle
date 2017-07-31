@@ -5,7 +5,6 @@ from math import pi
 import pygame
 
 from ..display import get_surface
-from ..markers import WallMarker
 
 import threading
 
@@ -115,30 +114,6 @@ class Arena(object):
         yield (self.right, self.bottom)
         yield (self.left, self.bottom)
 
-    def _populate_wall(self, left, right, count, start, angle):
-        left_bound_x, left_bound_y = left
-        right_bound_x, right_bound_y = right
-        for i in range(count):
-            delta = (i + 1) / (count + 1)
-            x = lerp(delta, left_bound_x, right_bound_x)
-            y = lerp(delta, left_bound_y, right_bound_y)
-            identifier = start + i
-            self.objects.append(WallMarker(self, identifier, (x, y), angle))
-
-    def _populate_wall_markers(self):
-        # Left wall
-        self._populate_wall(left=(self.left, self.bottom), right=(self.left, self.top),
-                            count=MARKERS_PER_WALL, start=3 * MARKERS_PER_WALL, angle=0)
-        # Right wall
-        self._populate_wall(left=(self.right, self.top), right=(self.right, self.bottom),
-                            count=MARKERS_PER_WALL, start=MARKERS_PER_WALL, angle=pi)
-        # Bottom wall
-        self._populate_wall(left=(self.right, self.bottom), right=(self.left, self.bottom),
-                            count=MARKERS_PER_WALL, start=2 * MARKERS_PER_WALL, angle=pi / 2)
-        # Top wall
-        self._populate_wall(left=(self.left, self.top), right=(self.right, self.top),
-                            count=MARKERS_PER_WALL, start=0, angle=3 * pi / 2)
-
     def _init_physics(self):
         self._physics_world = pypybox2d.world.World(gravity=(0, 0))
         # Global lock for simulation
@@ -179,11 +154,9 @@ class Arena(object):
                                             (self.left, WALL_WIDTH)],
                                            **WALL_SETTINGS)
 
-    def __init__(self, objects=None, wall_markers=True):
+    def __init__(self, objects=None):
         self._init_physics()
         self.objects = objects if objects is not None else []
-        if wall_markers:
-            self._populate_wall_markers()
 
     ## Public Methods ##
 
