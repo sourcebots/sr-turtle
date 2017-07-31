@@ -1,5 +1,5 @@
 import time
-from math import pi, sin, cos, degrees, hypot, atan2
+from math import pi, sin, cos, degrees, hypot, atan2, radians
 
 from .game_object import GameObject
 
@@ -91,15 +91,24 @@ class SimRobot(GameObject):
 
             centre_point = self._body.world_center
 
-            cast_angle = self._body.angle + angle_offset
+            spread_casts = 2
+            spread_maximum_angle_radians = 0 * radians(5)
+
+            cast = []
             cast_range = 4.0
 
-            target_point = [
-                centre_point[0] + cast_range * sin(cast_angle),
-                centre_point[1] + cast_range * cos(cast_angle),
-            ]
+            for spread_offset in [
+                spread_maximum_angle_radians * (x / spread_casts)
+                for x in range(-spread_casts, spread_casts + 1)
+            ]:
+                cast_angle = self._body.angle + angle_offset + spread_offset
 
-            cast = list(world.ray_cast(centre_point, target_point))
+                target_point = [
+                    centre_point[0] + cast_range * cos(cast_angle),
+                    centre_point[1] + cast_range * sin(cast_angle),
+                ]
+
+                cast.extend(world.ray_cast(centre_point, target_point))
 
         if not cast:
             return None
@@ -107,12 +116,9 @@ class SimRobot(GameObject):
         # Sort by fraction along the ray
         cast.sort(key=lambda x: x[3])
 
-        fixture, intercept_point, _, _ = cast[0]
+        fixture, intercept_point, _, fraction = cast[0]
 
-        distance_to_intercept = hypot(
-            intercept_point[0] - centre_point[0],
-            intercept_point[1] - centre_point[1],
-        )
+        distance_to_intercept = fraction * cast_range
 
         return distance_to_intercept
 
