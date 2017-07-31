@@ -2,17 +2,12 @@ import threading
 
 import pygame
 
-from sb.robot.arenas.tin_can_rally import TCRArena
-from .arenas import PiratePlunderArena, CTFArena, SunnySideUpArena, ABCArena
+from .arenas import TCRArena
 from .display import Display
 
 DEFAULT_GAME = 'tin-can-rally'
 
-GAMES = {'pirate-plunder': PiratePlunderArena,
-         'ctf': CTFArena,
-         'sunny-side-up': SunnySideUpArena,
-         'abc': ABCArena,
-         'tin-can-rally': TCRArena,
+GAMES = {'tin-can-rally': TCRArena,
          }
 
 
