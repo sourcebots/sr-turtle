@@ -85,10 +85,6 @@ class SimRobot(GameObject):
         with self.lock:
             self._body.angle = _new_heading
 
-    @property
-    def marker_info(self):
-        return create_marker_info_by_type(MARKER_ROBOT, self.zone)
-
     def __init__(self, simulator):
         self._body = None
         self.zone = 0
