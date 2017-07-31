@@ -1,3 +1,4 @@
 pygame
 pypybox2d
 pyyaml
+six
