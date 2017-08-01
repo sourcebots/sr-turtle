@@ -77,7 +77,7 @@ class Token(GameObject):
         self._body = arena._physics_world.create_body(position=(0, 0),
                                                       angle=0,
                                                       linear_damping=damping,
-                                                      angular_damping=damping,
+                                                      angular_damping=damping*2,
                                                       type=pypybox2d.body.Body.DYNAMIC)
         super(Token, self).__init__(arena)
         self.grabbed = False
@@ -125,9 +125,9 @@ class TCRArena(Arena):
         ]
 
         for i, location in enumerate(token_locations):
-            token = Token(self, i, damping=0.5)
+            token = Token(self, i, damping=5)
             token.location = location
-            token.heading = pi / 4
+            token.heading = 0
             self.objects.append(token)
 
     def _init_walls(self):
