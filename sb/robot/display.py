@@ -23,7 +23,7 @@ class Display(object):
 
         pygame.display.init()
         self._window = pygame.display.set_mode(self.size)
-        pygame.display.set_caption("SR Turtle Robot Simulator")
+        pygame.display.set_caption("SourceBots Robot Simulator")
         self._screen = pygame.display.get_surface()
         self._draw_background()
         self._draw()
