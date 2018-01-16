@@ -5,9 +5,10 @@ import pygame
 from .arenas import TCRArena
 from .display import Display
 
-DEFAULT_GAME = 'tin-can-rally'
+DEFAULT_GAME = 'pirate-islands'
 
 GAMES = {'tin-can-rally': TCRArena,
+         'pirate-islands': PIArena,
          }
 
 

@@ -18,7 +18,7 @@ from sb.robot import *
 parser = argparse.ArgumentParser()
 parser.add_argument('-c', '--config',
                     type=argparse.FileType('r'),
-                    default='games/tcr.yaml')
+                    default='games/pirate_islands.yaml')
 parser.add_argument('robot_scripts',
                     nargs='*')
 args = parser.parse_args()
