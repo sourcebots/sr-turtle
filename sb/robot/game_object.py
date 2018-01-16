@@ -3,7 +3,7 @@ import threading
 
 class GameObject(object):
     surface_name = None
-    marker_info = None
+    marker_id = None
     grabbable = False
 
     def __init__(self, arena):
