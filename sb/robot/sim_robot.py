@@ -182,8 +182,6 @@ class Camera:
                 is_wall_marker=lambda: is_wall_marker(mid),
                 is_token_marker=lambda: is_token_marker(mid),
                 polar=polar_coord,
-                pixel_centre="NOT SUPPORTED",
-                cartesian="NOT SUPPORTED",
             )
 
         return sorted([marker_map(obj) for obj in self.robot.arena.objects if

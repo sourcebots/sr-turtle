@@ -7,7 +7,7 @@ CartCoord = namedtuple("CartCoord", "x y z")
 
 # Marker class
 MarkerBase = namedtuple("Marker",
-                        "id size polar pixel_centre cartesian is_wall_marker is_token_marker")
+                        "id size polar is_wall_marker is_token_marker")
 
 
 class Marker(MarkerBase):
