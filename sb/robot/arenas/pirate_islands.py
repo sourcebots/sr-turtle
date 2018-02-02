@@ -90,8 +90,8 @@ class PIArena(Arena):
             while True:
                 pos = (
                     0.07 + random.random() * 1.7, 0.07 + random.random() * 1.7)
-                if not positions or min(
-                        [dist(pos, other) for other in positions]) > min_dist:
+                if not positions or min(dist(pos, other) for other in positions)\
+                        > min_dist:
                     positions.append(pos)
                     break
         return positions
