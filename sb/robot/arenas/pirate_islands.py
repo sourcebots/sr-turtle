@@ -7,7 +7,8 @@ import math
 import pygame
 import pypybox2d
 
-from sb.robot.game_specific import TOKEN_ZONE_3, TOKEN_ZONE_2, TOKEN_ZONE_1, TOKEN_ZONE_0
+from sb.robot.game_specific import TOKEN_ZONE_3, TOKEN_ZONE_2, TOKEN_ZONE_1, \
+    TOKEN_ZONE_0
 from sb.robot.arenas import Arena
 from sb.robot.arenas.arena import ARENA_MARKINGS_COLOR, ARENA_MARKINGS_WIDTH
 from sb.robot.markers import Token
@@ -53,6 +54,7 @@ class Pedestal(GameObject):
     def surface_name(self):
         return 'sb/pedestal.png'
 
+
 class PIArena(Arena):
     start_locations = [(-3.6, -3.6),
                        (3.6, 3.6)]
@@ -90,7 +92,7 @@ class PIArena(Arena):
             while True:
                 pos = (
                     0.07 + random.random() * 1.7, 0.07 + random.random() * 1.7)
-                if not positions or min(dist(pos, other) for other in positions)\
+                if not positions or min(dist(pos, other) for other in positions) \
                         > min_dist:
                     positions.append(pos)
                     break
@@ -125,28 +127,22 @@ class PIArena(Arena):
                                  start), display.to_pixel_coord(end),
                              width)
 
-        def line_opposite(start, end, **kwargs):
-            start_x, start_y = start
-            end_x, end_y = end
-            line((start_x, start_y), (end_x, end_y), **kwargs)
-            line((-start_x, -start_y), (-end_x, -end_y), **kwargs)
-
-        def line_symmetric(start, end, **kwargs):
-            start_x, start_y = start
-            end_x, end_y = end
-            line_opposite(start, end, **kwargs)
-            line_opposite((start_y, start_x), (end_y, end_x), **kwargs)
+        def line_all_corners(start, end, **kwargs):
+            for ang in [0, pi/2, pi, 3/2 * pi]:
+                new_start = self.rotate(start, ang)
+                new_end = self.rotate(end, ang)
+                line(new_start, new_end, **kwargs)
 
         # Scoring Zone Squares
-        line_symmetric((0.15, 0.15), (0.15, 3))
-        line_symmetric((-0.15, 0.15), (-0.15, 3))
-        line_symmetric((3, 3), (0.15, 3))
-        line_symmetric((-3, 3), (-0.15, 3))
+        line_all_corners((0.15, 0.15), (0.15, 3))
+        line_all_corners((-0.15, 0.15), (-0.15, 3))
+        line_all_corners((3, 3), (0.15, 3))
+        line_all_corners((-3, 3), (-0.15, 3))
 
         # Inner zone squares
-        line_symmetric((-2, 2), (-0.15, 2))
-        line_symmetric((2, 2), (0.15, 2))
+        line_all_corners((-2, 2), (-0.15, 2))
+        line_all_corners((2, 2), (0.15, 2))
 
         # Starting zones
-        line_symmetric((3, 3), (3, 4))
-        line_symmetric((-3, 3), (-3, 4))
+        line_all_corners((3, 3), (3, 4))
+        line_all_corners((-3, 3), (-3, 4))
