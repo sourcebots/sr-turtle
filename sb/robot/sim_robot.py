@@ -1,5 +1,4 @@
 import time
-from collections import namedtuple
 from math import pi, sin, cos, degrees, hypot, atan2, radians
 
 import math
