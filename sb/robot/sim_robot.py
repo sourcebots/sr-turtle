@@ -296,28 +296,25 @@ class SimRobot(GameObject):
 
     ## Internal methods ##
 
-    def _apply_wheel_force(self, y_position, power):
+    def _apply_wheel_force(self, y_position, power=COAST):
         location_world_space = self._body.get_world_point((0, y_position))
-        force_magnitude = power * 0.6
+        if power != COAST:
+            force_magnitude = power * 100 * 0.6
+            frict_multiplier = 50.2
+        else:
+            force_magnitude = 0
+            frict_multiplier = 5.2
+
         # account for friction
         frict_world = self._body.get_linear_velocity_from_local_point(
             (0, y_position))
         frict_x, frict_y = self._body.get_local_vector(frict_world)
-        force_magnitude -= frict_x * 50.2
+
+        force_magnitude -= frict_x * frict_multiplier
         force_world_space = (force_magnitude * cos(self.heading),
                              force_magnitude * sin(self.heading))
         self._body.apply_force(force_world_space, location_world_space)
 
-    def _apply_wheel_coast(self, y_position):
-        location_world_space = self._body.get_world_point((0, y_position))
-        # account for friction
-        frict_world = self._body.get_linear_velocity_from_local_point(
-            (0, y_position))
-        frict_x, frict_y = self._body.get_local_vector(frict_world)
-        force = frict_x * -5.2
-        force_world_space = (force * cos(self.heading),
-                             force * sin(self.heading))
-        self._body.apply_force(force_world_space, location_world_space)
 
     ## "Public" methods for simulator code ##
 
@@ -325,15 +322,9 @@ class SimRobot(GameObject):
         with self.lock, self.arena.physics_lock:
             half_width = self.width * 0.5
             # left wheel
-            if self.motor_board.m0 == COAST:
-                self._apply_wheel_coast(-half_width)
-            else:
-                self._apply_wheel_force(-half_width, self.motor_board.m0*100)
+            self._apply_wheel_force(-half_width, self.motor_board.m0)
             # right wheel
-            if self.motor_board.m1 == COAST:
-                self._apply_wheel_coast(half_width)
-            else:
-                self._apply_wheel_force(half_width, self.motor_board.m1*100)
+            self._apply_wheel_force(half_width, self.motor_board.m1)
             # kill the lateral velocity
             right_normal = self._body.get_world_vector((0, 1))
             lateral_vel = (right_normal.dot(self._body.linear_velocity) *
