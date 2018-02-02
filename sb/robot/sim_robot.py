@@ -41,7 +41,7 @@ class MotorChannel(object):
             self._power = value
 
 
-BRAKE = 0  # 0 so setting the motors to 0 has exactly the same affect as setting the motors to BRAKE
+BRAKE = 0  # 0 so setting the motors to 0 has exactly the same effect as setting the motors to BRAKE
 COAST = "coast"
 
 
