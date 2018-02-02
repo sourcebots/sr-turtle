@@ -68,8 +68,8 @@ class PIArena(Arena):
     @staticmethod
     def rotate(pos, ang):
         """
-        Rotate given position around the origin by the given angle
-        :param pos: position to rotate
+        Rotate given vector around the origin by the given angle
+        :param pos: vector to rotate
         :param ang: angle to rotate
         :return:
         """
