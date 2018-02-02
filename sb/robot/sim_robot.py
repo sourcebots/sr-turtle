@@ -78,7 +78,6 @@ class MotorBoard(object):
         self._check_voltage(new_voltage)
         self._motors[1] = new_voltage
 
-    __repr__ = __str__
 
 
 class ServoBoard(object):
@@ -88,7 +87,6 @@ class ServoBoard(object):
     def __str__(self):
         return "ServoBoard"
 
-    __repr__ = __str__
 
     ULTRASOUND_ANGLES = {
         (6, 7): ('ahead', 0),
@@ -191,7 +189,6 @@ class Camera:
         return sorted([marker_map(obj) for obj in self.robot.arena.objects if
                 object_filter(obj)],key=lambda m:m.polar.distance_meters)
 
-    __repr__ = __str__
 
 class SimRobot(GameObject):
     width = 0.45
@@ -284,8 +281,6 @@ class SimRobot(GameObject):
 
     def __str__(self):
         return "Robot"
-
-    __repr__ = __str__
 
     @property
     def motor_boards(self):

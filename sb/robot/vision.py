@@ -16,5 +16,3 @@ class Marker(MarkerBase):
 
     def __str__(self):
         return "Marker {}, pos: ({},{})".format(self.id, self.polar.distance_meters, self.polar.rot_y_rad)
-
-    __repr__ = __str__
