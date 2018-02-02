@@ -1,15 +1,28 @@
-from collections import namedtuple
+from typing import NamedTuple, Callable
+
 
 # Points
 # TODO: World Coordinates
-PolarCoord = namedtuple("PolarCoord", ('distance_meters', 'rot_y_rad', 'rot_y_deg'))
-CartCoord = namedtuple("CartCoord", ('x', 'y', 'z'))
-
-# Marker class
-MarkerBase = namedtuple("Marker",
-                        ('id', 'size', 'polar', 'is_wall_marker', 'is_token_marker'))
 
 
-class Marker(MarkerBase):
+class PolarCoord(NamedTuple):
+    distance_meters: float
+    rot_y_rad: float
+    rot_y_deg: float
+
+
+class CartCoord(NamedTuple):
+    x: float
+    y: float
+    z: float
+
+
+class Marker(NamedTuple):
+    id: int
+    size: float
+    polar: PolarCoord
+    is_wall_marker: Callable[[], bool]
+    is_token_marker: Callable[[], bool]
+
     def __str__(self):
         return "Marker {}, pos: ({},{})".format(self.id, self.polar.distance_meters, self.polar.rot_y_rad)
