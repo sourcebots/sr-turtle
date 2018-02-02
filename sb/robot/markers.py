@@ -5,6 +5,7 @@ import pypybox2d
 
 class Token(GameObject):
     grabbable = True
+    WIDTH = 0.08
 
     def __init__(self, arena, damping, marker_id=None):
         self._body = arena._physics_world.create_body(position=(0, 0),
@@ -15,11 +16,11 @@ class Token(GameObject):
         super(Token, self).__init__(arena)
         self.marker_id = marker_id
         self.grabbed = False
-        WIDTH = 0.08
-        self._body.create_polygon_fixture([(-WIDTH, -WIDTH),
-                                           (WIDTH, -WIDTH),
-                                           (WIDTH,  WIDTH),
-                                           (-WIDTH,  WIDTH)],
+        width = Token.WIDTH
+        self._body.create_polygon_fixture([(-width, -width),
+                                           (width, -width),
+                                           (width,  width),
+                                           (-width,  width)],
                                           density=1,
                                           restitution=0.2,
                                           friction=0.3)
