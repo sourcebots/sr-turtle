@@ -6,22 +6,6 @@ import pypybox2d
 class Token(GameObject):
     grabbable = True
 
-    @property
-    def location(self):
-        return self._body.position
-
-    @location.setter
-    def location(self, new_pos):
-        self._body.position = new_pos
-
-    @property
-    def heading(self):
-        return self._body.angle
-
-    @heading.setter
-    def heading(self, new_heading):
-        self._body.angle = new_heading
-
     def __init__(self, arena, damping, marker_id=None):
         self._body = arena._physics_world.create_body(position=(0, 0),
                                                       angle=0,
@@ -39,6 +23,22 @@ class Token(GameObject):
                                           density=1,
                                           restitution=0.2,
                                           friction=0.3)
+
+    @property
+    def location(self):
+        return self._body.position
+
+    @location.setter
+    def location(self, new_pos):
+        self._body.position = new_pos
+
+    @property
+    def heading(self):
+        return self._body.angle
+
+    @heading.setter
+    def heading(self, new_heading):
+        self._body.angle = new_heading
 
     def grab(self):
         self.grabbed = True
