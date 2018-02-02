@@ -2,12 +2,12 @@ from collections import namedtuple
 
 # Points
 # TODO: World Coordinates
-PolarCoord = namedtuple("PolarCoord", "distance_meters rot_y_rad rot_y_deg")
-CartCoord = namedtuple("CartCoord", "x y z")
+PolarCoord = namedtuple("PolarCoord", ('distance_meters', 'rot_y_rad', 'rot_y_deg'))
+CartCoord = namedtuple("CartCoord", ('x', 'y', 'z'))
 
 # Marker class
 MarkerBase = namedtuple("Marker",
-                        "id size polar is_wall_marker is_token_marker")
+                        ('id', 'size', 'polar', 'is_wall_marker', 'is_token_marker'))
 
 
 class Marker(MarkerBase):
