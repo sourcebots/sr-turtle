@@ -11,8 +11,5 @@ MarkerBase = namedtuple("Marker",
 
 
 class Marker(MarkerBase):
-    def __new__(cls, *args, **kwargs):
-        return super().__new__(cls, *args, **kwargs)
-
     def __str__(self):
         return "Marker {}, pos: ({},{})".format(self.id, self.polar.distance_meters, self.polar.rot_y_rad)
