@@ -100,8 +100,7 @@ class PIArena(Arena):
         token_locations = self.random_pos_spaced(4)
         for zone_id, token_ids in enumerate(
                 [TOKEN_ZONE_0, TOKEN_ZONE_1, TOKEN_ZONE_2, TOKEN_ZONE_3]):
-            for i, (location, token_id) in enumerate(
-                    zip(token_locations, token_ids)):
+            for location, token_id in zip(token_locations, token_ids):
                 token = Token(self, marker_id=token_id, damping=5)
                 token.location = self.rotate(
                     (-(location[0] + 0.15), -(location[1] + 0.15)),
