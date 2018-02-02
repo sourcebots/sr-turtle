@@ -209,8 +209,6 @@ class SimRobot(GameObject):
 
     @location.setter
     def location(self, new_pos):
-        if self._body is None:
-            return  # Slight hack: deal with the initial setting from the constructor
         with self.lock:
             self._body.position = new_pos
 
@@ -221,8 +219,6 @@ class SimRobot(GameObject):
 
     @heading.setter
     def heading(self, _new_heading):
-        if self._body is None:
-            return  # Slight hack: deal with the initial setting from the constructor
         with self.lock:
             self._body.angle = _new_heading
 

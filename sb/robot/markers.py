@@ -12,8 +12,6 @@ class Token(GameObject):
 
     @location.setter
     def location(self, new_pos):
-        if self._body is None:
-            return  # Slight hack: deal with the initial setting from the constructor
         self._body.position = new_pos
 
     @property
@@ -21,10 +19,8 @@ class Token(GameObject):
         return self._body.angle
 
     @heading.setter
-    def heading(self, _new_heading):
-        if self._body is None:
-            return  # Slight hack: deal with the initial setting from the constructor
-        self._body.angle = _new_heading
+    def heading(self, new_heading):
+        self._body.angle = new_heading
 
     def __init__(self, arena, damping, marker_id=None):
         self._body = arena._physics_world.create_body(position=(0, 0),
