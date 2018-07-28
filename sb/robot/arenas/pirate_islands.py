@@ -33,8 +33,8 @@ class Pedestal(GameObject):
         return self._body.angle
 
     @heading.setter
-    def heading(self, _new_heading):
-        self._body.angle = _new_heading
+    def heading(self, new_heading):
+        self._body.angle = new_heading
 
     def __init__(self, arena):
         self._body = arena._physics_world.create_body(position=(0, 0),

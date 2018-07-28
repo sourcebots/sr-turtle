@@ -212,9 +212,9 @@ class SimRobot(GameObject):
             return self._body.angle
 
     @heading.setter
-    def heading(self, _new_heading):
+    def heading(self, new_heading):
         with self.lock:
-            self._body.angle = _new_heading
+            self._body.angle = new_heading
 
     def send_ultrasound_ping(self, angle_offset):
         with self.arena.physics_lock:
