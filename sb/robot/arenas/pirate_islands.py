@@ -50,10 +50,7 @@ class Pedestal(GameObject):
                                           friction=0.3)
         super().__init__(arena)
 
-    @property
-    def surface_name(self):
-        return 'sb/pedestal.png'
-
+    surface_name = 'sb/pedestal.png'
 
 class PIArena(Arena):
     start_locations = [(-3.6, -3.6),
