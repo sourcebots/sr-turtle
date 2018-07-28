@@ -7,7 +7,6 @@ import pypybox2d
 
 from sb.robot.arenas import Arena
 from sb.robot.arenas.arena import ARENA_MARKINGS_COLOR, ARENA_MARKINGS_WIDTH
-from sb.robot.display import get_surface
 from ..game_object import GameObject
 
 WALL_DIAMETER_METRES = 4
@@ -20,30 +19,44 @@ class TCRWall(GameObject):
 
     @location.setter
     def location(self, new_pos):
-        self._body.position = new_pos
+        self._body.position = (new_pos[0]-4+self.width/2, new_pos[1]-4+self.height/2)
 
     @property
     def heading(self):
         return self._body.angle
 
+    @property
+    def width(self):
+        return self._w
+
+    @property
+    def height(self):
+        return self._h
 
     @heading.setter
     def heading(self, new_heading):
         self._body.angle = new_heading
 
-    def __init__(self, arena):
+    def __init__(self, arena, w, h):
         self._body = arena._physics_world.create_body(position=(0, 0),
                                                       angle=0,
                                                       type=pypybox2d.body.Body.STATIC)
-
-        point_dist = WALL_DIAMETER_METRES / 2
-        self._body.create_polygon_fixture([(-point_dist, -point_dist),
-                                           (point_dist, -point_dist),
-                                           (point_dist, point_dist),
-                                           (-point_dist, point_dist)],
+        hw = w/2
+        hh = h/2
+        fixture = self._body.create_polygon_fixture([
+                                           (-hw, -hh),
+                                           (hw, -hh),
+                                           (hw, hh),
+                                           (-hw, hh)],
                                           restitution=0.2,
                                           friction=0.3)
+        self.vertices = fixture.shape.vertices
+        self._w = w
+        self._h = h
         super().__init__(arena)
+
+    def get_corners(self):
+        return [(x+self.location[0], y+self.location[1]) for x, y in self.vertices]
 
 
 class Token(GameObject):
@@ -69,15 +82,15 @@ class Token(GameObject):
         self._body = arena._physics_world.create_body(position=(0, 0),
                                                       angle=0,
                                                       linear_damping=damping,
-                                                      angular_damping=damping*2,
+                                                      angular_damping=damping * 2,
                                                       type=pypybox2d.body.Body.DYNAMIC)
         super(Token, self).__init__(arena)
         self.grabbed = False
         WIDTH = 0.08
         self._body.create_polygon_fixture([(-WIDTH, -WIDTH),
                                            (WIDTH, -WIDTH),
-                                           (WIDTH,  WIDTH),
-                                           (-WIDTH,  WIDTH)],
+                                           (WIDTH, WIDTH),
+                                           (-WIDTH, WIDTH)],
                                           density=1,
                                           restitution=0.2,
                                           friction=0.3)
@@ -123,11 +136,11 @@ class TCRArena2018(Arena):
             self.objects.append(token)
 
     def _init_walls(self):
-        wall_locations = [(0, 0)]
-        for x, y in wall_locations:
-            wall = TCRWall(self)
-            wall.location = (x, y)
-            self.objects.append(wall)
+        self.walls = set()
+        wall = TCRWall(self, 1.22, 2.44)
+        wall.location = (1.5, 1.55)
+        self.objects.append(wall)
+        self.walls.add(wall)
 
     def draw_background(self, surface, display):
         super().draw_background(surface, display)
@@ -151,13 +164,34 @@ class TCRArena2018(Arena):
             line_opposite((start_y, start_x), (end_y, end_x), **kwargs)
 
         # Section lines
-        line_symmetric((0, WALL_DIAMETER_METRES/2), (0, 4))
+        line_symmetric((0, WALL_DIAMETER_METRES / 2), (0, 4))
 
         # Starting zones
         line_opposite((3, 3), (3, 4))
         line_opposite((3, 3), (4, 3))
 
         # Centre Wall
-        point_dist = (WALL_DIAMETER_METRES / 2)
-        line_symmetric(
-            (point_dist, point_dist), (-point_dist, point_dist), colour=(0x00, 0x80, 0xd6), width=7)
+        for wall in self.walls:
+            vectors = wall.get_corners()
+            colour = (0x00, 0x80, 0xd6)
+            width = 7
+            line(
+                (vectors[0]), (vectors[1]),
+                colour=colour,
+                width=width
+            )
+            line(
+                (vectors[1]), (vectors[2]),
+                colour=colour,
+                width=width
+            )
+            line(
+                (vectors[2]), (vectors[3]),
+                colour=colour,
+                width=width
+            )
+            line(
+                (vectors[3]), (vectors[0]),
+                colour=colour,
+                width=width
+            )
