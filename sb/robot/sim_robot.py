@@ -12,7 +12,7 @@ import pypybox2d
 SPEED_SCALE_FACTOR = 0.02
 MAX_MOTOR_SPEED = 100
 
-GRAB_RADIUS = 0.4
+GRAB_RADIUS = 0.6
 HALF_GRAB_SECTOR_WIDTH = pi / 4
 HALF_FOV_WIDTH = pi / 6
 
@@ -344,9 +344,16 @@ class SimRobot(GameObject):
         def object_filter(o):
             rel_x, rel_y = (o.location[0] - x, o.location[1] - y)
             direction = atan2(rel_y, rel_x)
+            rel_heading = (direction - heading)
+
+            if rel_heading > math.pi:
+                rel_heading -= 2*math.pi
+            elif rel_heading < math.pi:
+                rel_heading += 2*math.pi
+
             return (o.grabbable and
                     hypot(rel_x, rel_y) <= GRAB_RADIUS and
-                    -HALF_GRAB_SECTOR_WIDTH < direction - heading < HALF_GRAB_SECTOR_WIDTH and
+                    -HALF_GRAB_SECTOR_WIDTH < rel_heading < HALF_GRAB_SECTOR_WIDTH and
                     not o.grabbed)
 
         objects = list(filter(object_filter, self.arena.objects))
