@@ -1,4 +1,4 @@
-# Arena definition for 'Tin Can Rally', the 2017 Smallpeice game.
+# Arena definition for 'Tin Can Rally', the 2018 Smallpeice game.
 # (A blatant rip-off of the 2011 game from Student Robotics)
 from math import pi, cos, sin
 
