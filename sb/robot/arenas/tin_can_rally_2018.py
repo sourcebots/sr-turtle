@@ -19,7 +19,8 @@ class TCRWall(GameObject):
 
     @location.setter
     def location(self, new_pos):
-        self._body.position = (new_pos[0] - 4 + self.width/2, new_pos[1] - 4 + self.height/2)
+        self._body.position = (
+        new_pos[0] - 4 + self.width / 2, new_pos[1] - 4 + self.height / 2)
 
     @property
     def heading(self):
@@ -79,7 +80,7 @@ class Token(GameObject):
     def heading(self, new_heading):
         self._body.angle = new_heading
 
-    def __init__(self, arena, number, damping, is_gold=False):
+    def __init__(self, arena, damping, is_gold=False):
         self._body = arena._physics_world.create_body(position=(0, 0),
                                                       angle=0,
                                                       linear_damping=damping,
@@ -95,7 +96,6 @@ class Token(GameObject):
         )
         self.is_gold = is_gold
 
-
     def grab(self):
         self.grabbed = True
 
@@ -104,12 +104,13 @@ class Token(GameObject):
 
     @property
     def surface_name(self):
-        return 'sb/{}can{}.png'.format('gold' if self.is_gold else '', '_grabbed' if self.grabbed else '')
+        return 'sb/{}can{}.png'.format('gold' if self.is_gold else '',
+                                       '_grabbed' if self.grabbed else '')
 
 
 class TCRArena2018(Arena):
-    start_locations = [(-4+2.5, -4+0.8),
-                       (4-2.5, 4-0.8)]
+    start_locations = [(-4 + 2.5, -4 + 0.8),
+                       (4 - 2.5, 4 - 0.8)]
 
     start_headings = [-pi, 0]
 
@@ -121,21 +122,21 @@ class TCRArena2018(Arena):
     def _init_tokens(self):
         token_locations = [
             # Numbers from the SVG defined in the rules.
-            (0.5-4, 0.8-4),
-            (1.2-4, 3.7-4),
-            (2.0-4, 7.7-4),
-            (3.4-4, 6.0-4),
+            (0.5 - 4, 0.8 - 4),
+            (1.2 - 4, 3.7 - 4),
+            (2.0 - 4, 7.7 - 4),
+            (3.4 - 4, 6.0 - 4),
         ]
 
         token_locations += [TCRArena2018.rotate(pos, pi) for pos in token_locations]
 
         for i, location in enumerate(token_locations):
-            token = Token(self, i, damping=5)
+            token = Token(self, damping=5)
             token.location = location
             token.heading = 0
             self.objects.append(token)
 
-        gold_token = Token(self, len(token_locations), damping=5, is_gold=True)
+        gold_token = Token(self, damping=5, is_gold=True)
         self.objects.append(gold_token)
 
     @staticmethod
@@ -204,18 +205,17 @@ class TCRArena2018(Arena):
         # Section lines
         colour = (0x70, 0x70, 0x70)
         # Straight lines
-        line_opposite((1.5-4, 0-4), (1.5-4, 1.55-4),      colour=colour)
-        line_opposite((6.5-4, 4.1-4), (8-4, 4.1-4),       colour=colour)
+        line_opposite((1.5 - 4, 0 - 4), (1.5 - 4, 1.55 - 4), colour=colour)
+        line_opposite((6.5 - 4, 4.1 - 4), (8 - 4, 4.1 - 4), colour=colour)
         # The bendy boundary
-        start = (5.28-4, 0-4)
-        p1 = (start[0], start[1]+1.25)
-        p2 = (p1[0]-0.3, p1[1]+0.3)
-        end = (p2[0]-1.04, p2[1])
+        start = (5.28 - 4, 0 - 4)
+        p1 = (start[0], start[1] + 1.25)
+        p2 = (p1[0] - 0.3, p1[1] + 0.3)
+        end = (p2[0] - 1.04, p2[1])
 
         line_opposite(start, p1, colour=colour)
         line_opposite(p1, p2, colour=colour)
         line_opposite(p2, end, colour=colour)
-
 
         # Centre Wall
         for wall in self.walls:
