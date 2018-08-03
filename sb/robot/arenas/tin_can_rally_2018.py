@@ -1,6 +1,6 @@
 # Arena definition for 'Tin Can Rally', the 2017 Smallpeice game.
 # (A blatant rip-off of the 2011 game from Student Robotics)
-from math import pi
+from math import pi, cos, sin
 
 import pygame
 import pypybox2d
@@ -19,7 +19,7 @@ class TCRWall(GameObject):
 
     @location.setter
     def location(self, new_pos):
-        self._body.position = (new_pos[0]-4+self.width/2, new_pos[1]-4+self.height/2)
+        self._body.position = (new_pos[0] - 4 + self.width/2, new_pos[1] - 4 + self.height/2)
 
     @property
     def heading(self):
@@ -37,26 +37,27 @@ class TCRWall(GameObject):
     def heading(self, new_heading):
         self._body.angle = new_heading
 
-    def __init__(self, arena, w, h):
-        self._body = arena._physics_world.create_body(position=(0, 0),
+    def __init__(self, arena, dims, pos=(0.0, 0.0)):
+        self._body = arena._physics_world.create_body(position=(0.0, 0.0),
                                                       angle=0,
                                                       type=pypybox2d.body.Body.STATIC)
-        hw = w/2
-        hh = h/2
+        hw = dims[0] / 2.0
+        hh = dims[1] / 2.0
         fixture = self._body.create_polygon_fixture([
-                                           (-hw, -hh),
-                                           (hw, -hh),
-                                           (hw, hh),
-                                           (-hw, hh)],
-                                          restitution=0.2,
-                                          friction=0.3)
+            (-hw, -hh),
+            (hw, -hh),
+            (hw, hh),
+            (-hw, hh)],
+            restitution=0.2,
+            friction=0.3)
         self.vertices = fixture.shape.vertices
-        self._w = w
-        self._h = h
+        self._w = dims[0]
+        self._h = dims[1]
+        self.location = pos
         super().__init__(arena)
 
     def get_corners(self):
-        return [(x+self.location[0], y+self.location[1]) for x, y in self.vertices]
+        return [(x + self.location[0], y + self.location[1]) for x, y in self.vertices]
 
 
 class Token(GameObject):
@@ -78,7 +79,7 @@ class Token(GameObject):
     def heading(self, new_heading):
         self._body.angle = new_heading
 
-    def __init__(self, arena, number, damping):
+    def __init__(self, arena, number, damping, is_gold=False):
         self._body = arena._physics_world.create_body(position=(0, 0),
                                                       angle=0,
                                                       linear_damping=damping,
@@ -87,13 +88,13 @@ class Token(GameObject):
         super(Token, self).__init__(arena)
         self.grabbed = False
         WIDTH = 0.08
-        self._body.create_polygon_fixture([(-WIDTH, -WIDTH),
-                                           (WIDTH, -WIDTH),
-                                           (WIDTH, WIDTH),
-                                           (-WIDTH, WIDTH)],
-                                          density=1,
-                                          restitution=0.2,
-                                          friction=0.3)
+        self._body.create_circle_fixture(
+            radius=WIDTH,
+            restitution=0.2,
+            friction=0.3
+        )
+        self.is_gold = is_gold
+
 
     def grab(self):
         self.grabbed = True
@@ -103,15 +104,14 @@ class Token(GameObject):
 
     @property
     def surface_name(self):
-        return 'sb/token{0}.png'.format('_grabbed' if self.grabbed else '')
+        return 'sb/{}can{}.png'.format('gold' if self.is_gold else '', '_grabbed' if self.grabbed else '')
 
 
 class TCRArena2018(Arena):
-    start_locations = [(-3.6, -3.6),
-                       (3.6, 3.6)]
+    start_locations = [(-4+2.5, -4+0.8),
+                       (4-2.5, 4-0.8)]
 
-    start_headings = [pi / 2,
-                      -pi / 2]
+    start_headings = [-pi, 0]
 
     def __init__(self, objects=None):
         super().__init__(objects)
@@ -119,15 +119,15 @@ class TCRArena2018(Arena):
         self._init_tokens()
 
     def _init_tokens(self):
-        # Clockwise from top left
         token_locations = [
-            (-0.5, -3),
-            (3, -3),
-            (3, -0.5),
-            (0.5, 3),
-            (-3, 3),
-            (-3, 0.5),
+            # Numbers from the SVG defined in the rules.
+            (0.5-4, 0.8-4),
+            (1.2-4, 3.7-4),
+            (2.0-4, 7.7-4),
+            (3.4-4, 6.0-4),
         ]
+
+        token_locations += [TCRArena2018.rotate(pos, pi) for pos in token_locations]
 
         for i, location in enumerate(token_locations):
             token = Token(self, i, damping=5)
@@ -135,12 +135,50 @@ class TCRArena2018(Arena):
             token.heading = 0
             self.objects.append(token)
 
+        gold_token = Token(self, len(token_locations), damping=5, is_gold=True)
+        self.objects.append(gold_token)
+
+    @staticmethod
+    def reflect(pos):
+        centred = (pos[0] - 4, pos[1] - 4)
+        rotated = TCRArena2018.rotate(centred, pi)
+        return rotated[0] + 4, rotated[1] + 4
+
+    @staticmethod
+    def rotate(pos, ang):
+        """
+        Rotate given vector around the centre by the given angle
+        :param pos: vector to rotate
+        :param ang: angle to rotate
+        :return:
+        """
+        return cos(ang) * pos[0] - sin(ang) * pos[1], sin(ang) * pos[0] + cos(
+            ang) * pos[1]
+
     def _init_walls(self):
         self.walls = set()
-        wall = TCRWall(self, 1.22, 2.44)
-        wall.location = (1.5, 1.55)
-        self.objects.append(wall)
-        self.walls.add(wall)
+        wall_details = {
+            # Copied from the SVG spec, tweaked slightly because it didn't match up.
+            ((1.20, 2.40), (1.50, 1.55)),
+            ((1.20, 2.40), (2.68, 1.55)),
+            ((1.22, 1.22), (5.28, 1.55)),
+            ((0.2, 0.2), (1.50, 4.00)),
+            ((0.2, 0.2), (1.50, 5.02)),
+            ((0.2, 0.2), (2.45, 4.57)),
+            ((0.2, 0.2), (2.72, 5.23)),
+        }
+        walls = {TCRWall(self, pos[0], pos[1]) for pos in wall_details}
+        rotated_walls = {
+            TCRWall(
+                self,
+                pos[0],
+                self.reflect((pos[1][0] + pos[0][0], pos[1][1] + pos[0][1]))
+            ) for pos in wall_details
+        }
+
+        self.walls = walls.union(rotated_walls)
+
+        [self.objects.append(wall) for wall in self.walls]
 
     def draw_background(self, surface, display):
         super().draw_background(surface, display)
@@ -164,17 +202,26 @@ class TCRArena2018(Arena):
             line_opposite((start_y, start_x), (end_y, end_x), **kwargs)
 
         # Section lines
-        line_symmetric((0, WALL_DIAMETER_METRES / 2), (0, 4))
+        colour = (0x70, 0x70, 0x70)
+        # Straight lines
+        line_opposite((1.5-4, 0-4), (1.5-4, 1.55-4),      colour=colour)
+        line_opposite((6.5-4, 4.1-4), (8-4, 4.1-4),       colour=colour)
+        # The bendy boundary
+        start = (5.28-4, 0-4)
+        p1 = (start[0], start[1]+1.25)
+        p2 = (p1[0]-0.3, p1[1]+0.3)
+        end = (p2[0]-1.04, p2[1])
 
-        # Starting zones
-        line_opposite((3, 3), (3, 4))
-        line_opposite((3, 3), (4, 3))
+        line_opposite(start, p1, colour=colour)
+        line_opposite(p1, p2, colour=colour)
+        line_opposite(p2, end, colour=colour)
+
 
         # Centre Wall
         for wall in self.walls:
             vectors = wall.get_corners()
-            colour = (0x00, 0x80, 0xd6)
-            width = 7
+            colour = (0xdf, 0xff, 0xff)
+            width = 5
             line(
                 (vectors[0]), (vectors[1]),
                 colour=colour,
