@@ -46,6 +46,7 @@ class Pedestal(GameObject):
                                            (point_dist, -point_dist),
                                            (point_dist, point_dist),
                                            (-point_dist, point_dist)],
+                                          density=1,
                                           restitution=0.2,
                                           friction=0.3)
         super().__init__(arena)
