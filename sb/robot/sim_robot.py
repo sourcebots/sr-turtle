@@ -274,7 +274,7 @@ class SimRobot(GameObject):
         simulator.arena.objects.append(self)
         self.motor_board = MotorBoard(self)
         self.servo_board = ServoBoard(self)
-        self.camera = Camera(self)
+        # self.camera = Camera(self)
 
     def __str__(self):
         return "Robot"
@@ -289,9 +289,9 @@ class SimRobot(GameObject):
     def servo_boards(self):
         return BoardList({'bees': self.motor_board})
 
-    @property
-    def cameras(self):
-        return BoardList({'bees': self.camera})
+    # @property
+    # def cameras(self):
+    #     return BoardList({'bees': self.camera})
 
     ## Internal methods ##
 
