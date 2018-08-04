@@ -1,4 +1,3 @@
-from sb.robot import *
 from math import pi
 import time
 
@@ -6,44 +5,23 @@ r = Robot()
 
 motor_board = r.motor_board
 
-grabbed = False
-
 while True:
-    markers = r.camera.see()
-    closest_token = None
-    for marker in markers:
-        if marker.is_token_marker():
-            closest_token = marker
-            break
+    distance_right = r.servo_board.read_ultrasound(8, 9)
+    distance_ahead = r.servo_board.read_ultrasound(6, 7)
 
-    # If we couldn't see a token
-    if closest_token is None:
-        # Slowly turn in circles until we see one
-        motor_board.m0 = -0.05
-        motor_board.m1 = 0.05
+    print("Forward distance: ", distance_ahead)
+
+    if distance_ahead < 1.0:
+        motor_board.m0 = -0.5
+        motor_board.m1 = 0.5
+        print("COLLISION AVOID")
     else:
-        bearing = closest_token.polar.rot_y_deg
-        distance = closest_token.polar.distance_meters
-        if distance < 0.4:
-            if not grabbed:
-                print("GRAB")
-                r.grab()
-                grabbed = True
-            motor_board.m0 = COAST
-            motor_board.m1 = COAST
-        else:
-            if bearing < -5:
-                # Turn right
-                motor_board.m0 = -0.1
-                motor_board.m1 = 0.1
+        target_distance = 0.8
+        distance_error = distance_right - target_distance
 
-            elif bearing > 5:
-                # Turn left
-                motor_board.m0 = 0.1
-                motor_board.m1 = -0.1
-            else:
-                motor_board.m0 = 0.3
-                motor_board.m1 = 0.3
+        print("Tracking error: ", distance_error, " - measured: ", distance_right)
 
+        motor_board.m0 = 0.5
+        motor_board.m1 = 0.5 - .35 * distance_error
 
     time.sleep(0.1)
