@@ -92,7 +92,8 @@ class Token(GameObject):
         self._body.create_circle_fixture(
             radius=WIDTH,
             restitution=0.2,
-            friction=0.3
+            friction=0.3,
+            density=30,
         )
         self.is_gold = is_gold
 
