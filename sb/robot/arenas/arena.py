@@ -176,11 +176,15 @@ class Arena(object):
             if hasattr(obj, "tick"):
                 obj.tick(time_passed)
 
-    def draw_background(self, surface, display):
-        surface.fill(ARENA_FLOOR_COLOR)
-
+    def draw_motif(self, surface, display, pos):
         # Motif
         motif = get_surface(self.motif_name)
-        x, y = display.to_pixel_coord((0, 0), self)
+        x, y = display.to_pixel_coord(pos, self)
         w, h = motif.get_size()
         surface.blit(motif, (x - w / 2, y - h / 2))
+
+    def draw_background(self, surface, display, draw_motif=True):
+        surface.fill(ARENA_FLOOR_COLOR)
+        if draw_motif:
+            self.draw_motif(surface, display, (0, 0))
+

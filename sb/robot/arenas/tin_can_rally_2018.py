@@ -187,7 +187,7 @@ class TCRArena2018(Arena):
         [self.objects.append(obstacle) for obstacle in self.obstacles]
 
     def draw_background(self, surface, display):
-        super().draw_background(surface, display)
+        super().draw_background(surface, display, draw_motif=False)
 
         def line(start, end, colour=ARENA_MARKINGS_COLOR, width=ARENA_MARKINGS_WIDTH):
             pygame.draw.line(surface, colour,
@@ -227,6 +227,10 @@ class TCRArena2018(Arena):
             vectors = wall.get_corners()
             colour = (0x2d, 0x8b, 0xff)
             pygame.draw.polygon(surface, colour, [display.to_pixel_coord(pos) for pos in vectors])
+
+        # Draw the motif on the bottom of the screen
+        self.draw_motif(surface, display, (0.5, 3.25))
+
 
         for obstacle in self.obstacles:
             vectors = obstacle.get_corners()
