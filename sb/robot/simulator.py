@@ -2,12 +2,13 @@ import threading
 
 import pygame
 
-from .arenas import TCRArena, PIArena
+from .arenas import TCRArena, PIArena, TCRArena2018
 from .display import Display
 
-DEFAULT_GAME = 'pirate-islands'
+DEFAULT_GAME = 'tin-can-rally-2018'
 
 GAMES = {
+         'tin-can-rally-2018': TCRArena2018,
          'tin-can-rally': TCRArena,
          'pirate-islands': PIArena,
          }
