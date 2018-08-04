@@ -237,3 +237,13 @@ class TCRArena2018(Arena):
             vectors = obstacle.get_corners()
             colour = (0xff, 0x44, 0x44)
             pygame.draw.polygon(surface, colour, [display.to_pixel_coord(pos) for pos in vectors])
+
+
+        pygame.draw.polygon(surface, (0x0d, 0x6b, 0xbd),
+            [display.to_pixel_coord(pos) for pos in [
+                [0, -0.2],
+                [0.2, 0],
+                [0, 0.2],
+                [-0.2, 0],
+            ]]
+        )
