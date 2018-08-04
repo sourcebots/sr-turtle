@@ -128,7 +128,7 @@ class TCRArena2018(Arena):
             (3.4 - 4, 6.0 - 4),
         ]
 
-        token_locations += [TCRArena2018.rotate(pos, pi) for pos in token_locations]
+        token_locations += [self.rotate(pos, pi) for pos in token_locations]
 
         for location in token_locations:
             token = Token(self, damping=5)
