@@ -167,7 +167,7 @@ class TCRArena2018(Arena):
         obstacle_details = {
             ((0.2, 0.2), (1.50, 3.95)),
             ((0.2, 0.2), (1.50, 5.02)),
-            ((0.2, 0.2), (2.45, 4.57)),
+            ((0.2, 0.2), (2.45, 4.50)),
             ((0.2, 0.2), (2.72, 5.23)),
         }
         walls = {TCRWall(self, pos[0], pos[1]) for pos in wall_details}
