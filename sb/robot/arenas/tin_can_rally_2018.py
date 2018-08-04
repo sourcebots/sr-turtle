@@ -216,7 +216,7 @@ class TCRArena2018(Arena):
         start = (5.28 - 4, 0 - 4)
         p1 = (start[0], start[1] + 1.25)
         p2 = (p1[0] - 0.3, p1[1] + 0.3)
-        end = (p2[0] - 1.04, p2[1])
+        end = (p2[0] - 1.24, p2[1])
 
         line_opposite(start, p1, colour=colour)
         line_opposite(p1, p2, colour=colour)
