@@ -163,23 +163,28 @@ class TCRArena2018(Arena):
             ((1.20, 2.40), (1.50, 1.55)),
             ((1.20, 2.40), (2.68, 1.55)),
             ((1.22, 1.22), (5.28, 1.55)),
+        }
+        obstacle_details = {
             ((0.2, 0.2), (1.50, 3.95)),
             ((0.2, 0.2), (1.50, 5.02)),
             ((0.2, 0.2), (2.45, 4.57)),
             ((0.2, 0.2), (2.72, 5.23)),
         }
         walls = {TCRWall(self, pos[0], pos[1]) for pos in wall_details}
-        rotated_walls = {
-            TCRWall(
-                self,
-                pos[0],
-                self.reflect((pos[1][0] + pos[0][0], pos[1][1] + pos[0][1]))
-            ) for pos in wall_details
-        }
+        obstacles = {TCRWall(self, pos[0], pos[1]) for pos in obstacle_details}
+
+        def rotate(pos):
+            return self.reflect((pos[1][0] + pos[0][0], pos[1][1] + pos[0][1]))
+
+        rotated_walls = {TCRWall(self, pos[0], rotate(pos)) for pos in wall_details}
+        rotated_obstacles = {TCRWall(self, pos[0], rotate(pos))
+                             for pos in obstacle_details}
 
         self.walls = walls.union(rotated_walls)
+        self.obstacles = obstacles.union(rotated_obstacles)
 
         [self.objects.append(wall) for wall in self.walls]
+        [self.objects.append(obstacle) for obstacle in self.obstacles]
 
     def draw_background(self, surface, display):
         super().draw_background(surface, display)
@@ -220,5 +225,10 @@ class TCRArena2018(Arena):
         # Centre Wall
         for wall in self.walls:
             vectors = wall.get_corners()
-            colour = (0xdf, 0xff, 0xff)
+            colour = (0x2d, 0x8b, 0xff)
+            pygame.draw.polygon(surface, colour, [display.to_pixel_coord(pos) for pos in vectors])
+
+        for obstacle in self.obstacles:
+            vectors = obstacle.get_corners()
+            colour = (0xff, 0x44, 0x44)
             pygame.draw.polygon(surface, colour, [display.to_pixel_coord(pos) for pos in vectors])
