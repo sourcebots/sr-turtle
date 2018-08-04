@@ -163,7 +163,7 @@ class TCRArena2018(Arena):
             ((1.20, 2.40), (1.50, 1.55)),
             ((1.20, 2.40), (2.68, 1.55)),
             ((1.22, 1.22), (5.28, 1.55)),
-            ((0.2, 0.2), (1.50, 4.00)),
+            ((0.2, 0.2), (1.50, 3.95)),
             ((0.2, 0.2), (1.50, 5.02)),
             ((0.2, 0.2), (2.45, 4.57)),
             ((0.2, 0.2), (2.72, 5.23)),
@@ -221,24 +221,4 @@ class TCRArena2018(Arena):
         for wall in self.walls:
             vectors = wall.get_corners()
             colour = (0xdf, 0xff, 0xff)
-            width = 5
-            line(
-                (vectors[0]), (vectors[1]),
-                colour=colour,
-                width=width
-            )
-            line(
-                (vectors[1]), (vectors[2]),
-                colour=colour,
-                width=width
-            )
-            line(
-                (vectors[2]), (vectors[3]),
-                colour=colour,
-                width=width
-            )
-            line(
-                (vectors[3]), (vectors[0]),
-                colour=colour,
-                width=width
-            )
+            pygame.draw.polygon(surface, colour, [display.to_pixel_coord(pos) for pos in vectors])
