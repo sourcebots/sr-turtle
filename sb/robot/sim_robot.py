@@ -188,7 +188,7 @@ class Camera:
 
 
 class SimRobot(GameObject):
-    width = 0.45
+    width = 0.3
 
     surface_name = 'sb/robot.png'
 
