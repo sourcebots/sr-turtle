@@ -1,5 +1,5 @@
-from sb.robot import SimRobot
-from sb.robot import Simulator
+from robot import SimRobot
+from robot import Simulator
 
 try:
     sim = Simulator(num_tokens=5)

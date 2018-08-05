@@ -5,9 +5,8 @@ from math import pi
 import pygame
 import pypybox2d
 
-from sb.robot.arenas import Arena
-from sb.robot.arenas.arena import ARENA_MARKINGS_COLOR, ARENA_MARKINGS_WIDTH
-from sb.robot.display import get_surface
+from . import Arena
+from .arena import ARENA_MARKINGS_COLOR, ARENA_MARKINGS_WIDTH
 from ..game_object import GameObject
 
 WALL_DIAMETER_METRES = 4

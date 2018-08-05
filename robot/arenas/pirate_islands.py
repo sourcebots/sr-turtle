@@ -7,11 +7,11 @@ import math
 import pygame
 import pypybox2d
 
-from sb.robot.game_specific import TOKEN_ZONE_3, TOKEN_ZONE_2, TOKEN_ZONE_1, \
+from robot.game_specific import TOKEN_ZONE_3, TOKEN_ZONE_2, TOKEN_ZONE_1, \
     TOKEN_ZONE_0
-from sb.robot.arenas import Arena
-from sb.robot.arenas.arena import ARENA_MARKINGS_COLOR, ARENA_MARKINGS_WIDTH
-from sb.robot.markers import Token
+from . import Arena
+from .arena import ARENA_MARKINGS_COLOR, ARENA_MARKINGS_WIDTH
+from robot.markers import Token
 from ..game_object import GameObject
 
 #######
