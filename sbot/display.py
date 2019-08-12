@@ -19,7 +19,7 @@ class Display(object):
     def __init__(self, arena):
         self.arena = arena
         arena_w, arena_h = self.arena.size
-        self.size = (arena_w * PIXELS_PER_METER, arena_h * PIXELS_PER_METER)
+        self.size = (int(arena_w * PIXELS_PER_METER), int(arena_h * PIXELS_PER_METER))
 
         pygame.display.init()
         self._window = pygame.display.set_mode(self.size)

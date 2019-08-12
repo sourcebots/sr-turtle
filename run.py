@@ -18,7 +18,7 @@ from sbot import *
 parser = argparse.ArgumentParser()
 parser.add_argument('-c', '--config',
                     type=argparse.FileType('r'),
-                    default='games/tcr2018.yaml')
+                    default='games/scavengers.yaml')
 parser.add_argument('robot_scripts',
                     nargs='*')
 args = parser.parse_args()
