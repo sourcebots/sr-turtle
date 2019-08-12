@@ -1,4 +1,4 @@
-from robot import *
+from sbot import *
 from math import pi
 import time
 

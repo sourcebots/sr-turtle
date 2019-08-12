@@ -13,7 +13,7 @@ pypybox2d.shapes.reduce = functools.reduce
 
 # End Python 3 compatibility hax
 
-from robot import *
+from sbot import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-c', '--config',
