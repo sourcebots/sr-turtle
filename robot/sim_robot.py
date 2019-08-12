@@ -10,38 +10,35 @@ from .game_specific import MARKER_SIZES, WALL, TOKEN
 import pypybox2d
 
 SPEED_SCALE_FACTOR = 0.02
-MAX_MOTOR_SPEED = 100
+MAX_MOTOR_SPEED = 1
 
 GRAB_RADIUS = 0.6
 HALF_GRAB_SECTOR_WIDTH = pi / 4
 HALF_FOV_WIDTH = pi / 6
 
 GRABBER_OFFSET = 0.25
-
+SPEED_OF_SOUND = 346
 
 class AlreadyHoldingSomethingException(Exception):
     def __str__(self):
         return "The robot is already holding something."
 
+BRAKE = 0  # 0 so setting the motors to 0 has exactly the same effect as setting the motors to BRAKE
+COAST = 0.00000001
 
-class MotorChannel(object):
+class MotorList(object):
+
     def __init__(self, robot):
-        self._power = 0
         self._robot = robot
+        self._motors = [0,0]
 
-    @property
-    def power(self):
-        return self._power
-
-    @power.setter
-    def power(self, value):
+    def __setitem__(self, index, value):
         value = min(max(value, -MAX_MOTOR_SPEED), MAX_MOTOR_SPEED)
         with self._robot.lock:
-            self._power = value
+            self._motors[index] = value
 
-
-BRAKE = 0  # 0 so setting the motors to 0 has exactly the same effect as setting the motors to BRAKE
-COAST = "coast"
+    def __getitem__(self, index):
+        return self._motors[index]
 
 
 class MotorBoard(object):
@@ -49,10 +46,7 @@ class MotorBoard(object):
 
     def __init__(self, robot):
         self.robot = robot
-        self._motors = [0,0]
-
-    def __str__(self):
-        return "MotorBoard"
+        self._motors = MotorList(robot)
 
     def _check_voltage(self,new_voltage):
         if new_voltage != COAST and (new_voltage > 1 or new_voltage < -1):
@@ -60,32 +54,18 @@ class MotorBoard(object):
                 'Incorrect voltage value, valid values: between -1 and 1, robot.COAST, or robot.BRAKE')
 
     @property
-    def m0(self):
-        return self._motors[0]
+    def motors(self):
+        return self._motors
 
-    @m0.setter
-    def m0(self, new_voltage):
-        self._check_voltage(new_voltage)
-        self._motors[0] = new_voltage
-
-    @property
-    def m1(self):
-        return self._motors[1]
-
-    @m1.setter
-    def m1(self, new_voltage):
-        self._check_voltage(new_voltage)
-        self._motors[1] = new_voltage
-
-
-
-class ServoBoard(object):
+class UltrasoundSensorList(object):
     def __init__(self, robot):
-        self.robot = robot
+        self._robot = robot
 
-    def __str__(self):
-        return "ServoBoard"
+    def __getitem__(self, tup):
+        trigger, echo = tup
+        return UltrasoundSensor(self._robot, trigger, echo)
 
+class UltrasoundSensor(object):
 
     ULTRASOUND_ANGLES = {
         (6, 7): ('ahead', 0),
@@ -93,13 +73,24 @@ class ServoBoard(object):
         (10, 11): ('left', -math.pi / 2),
     }
 
-    def read_ultrasound(self, trigger_pin, echo_pin):
-        pin_pair = (trigger_pin, echo_pin)
+    def __init__(self, robot, trigger_pin, echo_pin):
+        self.robot = robot
+        self.trigger_pin = trigger_pin
+        self.echo_pin = echo_pin
+
+    def distance(self):
+        return self._read_ultrasound()
+
+    def pulse(self):
+        return self._read_ultrasound() / SPEED_OF_SOUND
+
+    def _read_ultrasound(self):
+        pin_pair = (self.trigger_pin, self.echo_pin)
 
         try:
             _, angle_offset = self.ULTRASOUND_ANGLES[pin_pair]
         except KeyError:
-            print("There's no ultrasound module on those pins. Try:")
+            print("There's no ultrasound module on those pins in the simulator. Try:")
             for (
                     (trigger_pin, echo_pin),
                     (direction, _),
@@ -111,7 +102,7 @@ class ServoBoard(object):
                 ))
             return 0.0
 
-        result = self.robot.send_ultrasound_ping(angle_offset)
+        result = self.robot._send_ultrasound_ping(angle_offset)
 
         if result is None:
             # No detection is equivalent to just not getting an echo response
@@ -119,13 +110,18 @@ class ServoBoard(object):
 
         return result
 
+class Arduino:
+    def __init__(self, robot):
+        self.robot = robot
+        self._ultrasound_sensors = UltrasoundSensorList(robot)
+
+    @property
+    def ultrasound_sensors(self):
+        return self._ultrasound_sensors
 
 class Camera:
     def __init__(self, robot):
         self.robot = robot
-
-    def __str__(self):
-        return "Camera"
 
     def see(self):
         with self.robot.lock:
@@ -186,6 +182,13 @@ class Camera:
         return sorted([marker_map(obj) for obj in self.robot.arena.objects if
                 object_filter(obj)],key=lambda m:m.polar.distance_meters)
 
+class ServoBoard(object):
+    def __init__(self, robot):
+        pass
+
+    @property
+    def servos(self):
+        return []
 
 class SimRobot(GameObject):
     width = 0.3
@@ -216,7 +219,7 @@ class SimRobot(GameObject):
         with self.lock:
             self._body.angle = new_heading
 
-    def send_ultrasound_ping(self, angle_offset):
+    def _send_ultrasound_ping(self, angle_offset):
         with self.arena.physics_lock:
             world = self._body.world
 
@@ -257,7 +260,6 @@ class SimRobot(GameObject):
         self._body = None
         self.zone = 0
         super(SimRobot, self).__init__(simulator.arena)
-        self.motors = [MotorBoard(self)]
         make_body = simulator.arena._physics_world.create_body
         half_width = self.width * 0.5
         with self.arena.physics_lock:
@@ -274,24 +276,15 @@ class SimRobot(GameObject):
         simulator.arena.objects.append(self)
         self.motor_board = MotorBoard(self)
         self.servo_board = ServoBoard(self)
-        self.camera = Camera(self)
-
-    def __str__(self):
-        return "Robot"
-
-
+        self.arduino = Arduino(self)
 
     @property
     def motor_boards(self):
-        return BoardList({'bees': self.motor_board})
+        return BoardList([self.motor_board])
 
     @property
     def servo_boards(self):
-        return BoardList({'bees': self.motor_board})
-
-    @property
-    def cameras(self):
-        return BoardList({'bees': self.camera})
+        return BoardList([self.servo_board])
 
     ## Internal methods ##
 
@@ -321,9 +314,9 @@ class SimRobot(GameObject):
         with self.lock, self.arena.physics_lock:
             half_width = self.width * 0.5
             # left wheel
-            self._apply_wheel_force(-half_width, self.motor_board.m0)
+            self._apply_wheel_force(-half_width, self.motor_board.motors[0])
             # right wheel
-            self._apply_wheel_force(half_width, self.motor_board.m1)
+            self._apply_wheel_force(half_width, self.motor_board.motors[1])
             # kill the lateral velocity
             right_normal = self._body.get_world_vector((0, 1))
             lateral_vel = (right_normal.dot(self._body.linear_velocity) *
@@ -388,14 +381,11 @@ class SimRobot(GameObject):
 class BoardList:
     """A mapping of ``Board``s allowing access by index or identity."""
 
-    def __init__(self, *args, **kwargs):
-        self._store = dict(*args, **kwargs)
-        self._store_list = sorted(self._store.values(), key=lambda board: board.serial)
+    def __init__(self, board_list):
+        self._store_list = board_list
 
     def __getitem__(self, attr):
-        if isinstance(attr, int):
-            return self._store_list[attr]
-        return self._store[attr]
+        return self._store_list[attr]
 
     def __iter__(self):
         return iter(self._store_list)
