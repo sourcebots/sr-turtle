@@ -164,7 +164,7 @@ class SimRobot(GameObject):
             # left wheel
             self._apply_wheel_force(-half_width, self.motors[0].m0.power)
             # right wheel
-            self._apply_wheel_force(half_width, self.motors[0].m1.power)
+            self._apply_wheel_force(half_width, self.motors[0].m1.power*1.05)
             # kill the lateral velocity
             right_normal = self._body.get_world_vector((0, 1))
             lateral_vel = (right_normal.dot(self._body.linear_velocity) *
