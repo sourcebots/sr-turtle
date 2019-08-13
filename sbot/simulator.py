@@ -1,3 +1,5 @@
+from __future__ import division
+
 import threading
 
 import pygame
@@ -13,7 +15,6 @@ GAMES = {
          'pirate-islands': PIArena,
          'scavengers-2019': Scavengers,
          }
-
 
 class Simulator(object):
     def __init__(self, config=None, size=(8, 8), frames_per_second=30, background=True):

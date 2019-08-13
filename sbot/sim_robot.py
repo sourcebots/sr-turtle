@@ -1,3 +1,5 @@
+from __future__ import division
+
 import time
 from math import pi, sin, cos, degrees, hypot, atan2, radians
 
@@ -26,32 +28,24 @@ class AlreadyHoldingSomethingException(Exception):
 BRAKE = 0  # 0 so setting the motors to 0 has exactly the same effect as setting the motors to BRAKE
 COAST = 0.00000001
 
-class MotorList(object):
-
+class Motor(object):
     def __init__(self, robot):
+        self._power = 0
         self._robot = robot
-        self._motors = [0,0]
 
-    def __setitem__(self, index, value):
+    @property
+    def power(self):
+        return self._power
+
+    @power.setter
+    def power(self, value):
         value = min(max(value, -MAX_MOTOR_SPEED), MAX_MOTOR_SPEED)
         with self._robot.lock:
-            self._motors[index] = value
-
-    def __getitem__(self, index):
-        return self._motors[index]
-
+            self._power = value
 
 class MotorBoard(object):
-    VOLTAGE_SCALE = 1
-
     def __init__(self, robot):
-        self.robot = robot
-        self._motors = MotorList(robot)
-
-    def _check_voltage(self,new_voltage):
-        if new_voltage != COAST and (new_voltage > 1 or new_voltage < -1):
-            raise ValueError(
-                'Incorrect voltage value, valid values: between -1 and 1, robot.COAST, or robot.BRAKE')
+        self._motors = [Motor(robot), Motor(robot)]
 
     @property
     def motors(self):
@@ -314,9 +308,9 @@ class SimRobot(GameObject):
         with self.lock, self.arena.physics_lock:
             half_width = self.width * 0.5
             # left wheel
-            self._apply_wheel_force(-half_width, self.motor_board.motors[0])
+            self._apply_wheel_force(-half_width, self.motor_board.motors[0].power)
             # right wheel
-            self._apply_wheel_force(half_width, self.motor_board.motors[1])
+            self._apply_wheel_force( half_width, self.motor_board.motors[1].power * 1.05)
             # kill the lateral velocity
             right_normal = self._body.get_world_vector((0, 1))
             lateral_vel = (right_normal.dot(self._body.linear_velocity) *

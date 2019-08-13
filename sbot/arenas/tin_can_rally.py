@@ -42,7 +42,7 @@ class TCRWall(GameObject):
                                            (-point_dist, point_dist)],
                                           restitution=0.2,
                                           friction=0.3)
-        super().__init__(arena)
+        super(TCRWall, self).__init__(arena)
 
 
 class Token(GameObject):
@@ -100,7 +100,7 @@ class TCRArena(Arena):
                       -pi / 2]
 
     def __init__(self, objects=None):
-        super().__init__(objects)
+        super(TCRArena, self).__init__(objects)
         self._init_walls()
         self._init_tokens()
 
@@ -129,7 +129,7 @@ class TCRArena(Arena):
             self.objects.append(wall)
 
     def draw_background(self, surface, display):
-        super().draw_background(surface, display)
+        super(TCRArena, self).draw_background(surface, display)
 
         def line(start, end, colour=ARENA_MARKINGS_COLOR, width=ARENA_MARKINGS_WIDTH):
             pygame.draw.line(surface, colour,

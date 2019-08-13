@@ -49,7 +49,7 @@ class Wall(GameObject):
                                            (-point_dist, point_dist)],
                                           restitution=0.2,
                                           friction=0.3)
-        super().__init__(arena)
+        super(Wall, self).__init__(arena)
 
 class Scavengers(Arena):
     size = (8.4, 8.4)
@@ -79,7 +79,7 @@ class Scavengers(Arena):
     token_locations = possible_token_locations[:missing_token_id] + possible_token_locations[missing_token_id + 1:]
 
     def __init__(self, objects=None):
-        super().__init__(objects)
+        super(Scavengers, self).__init__(objects)
         self._init_pedestals()
         self._init_tokens()
 
@@ -111,7 +111,7 @@ class Scavengers(Arena):
             self.objects.append(wall)
 
     def draw_background(self, surface, display):
-        super().draw_background(surface, display, draw_motif=False)
+        super(Scavengers, self).draw_background(surface, display, draw_motif=False)
 
         def line(start, end, colour=ARENA_MARKINGS_COLOR,
                  width=ARENA_MARKINGS_WIDTH):

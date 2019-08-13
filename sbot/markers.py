@@ -1,3 +1,5 @@
+from __future__ import division
+
 from .game_object import GameObject
 
 import pypybox2d

@@ -1,4 +1,3 @@
-import six
 import math
 import yaml
 import threading
@@ -11,7 +10,12 @@ import pypybox2d.shapes
 
 pypybox2d.shapes.reduce = functools.reduce
 
+import sys
+if sys.version_info[:2] <= (2, 7):
+    input = raw_input
+
 # End Python 3 compatibility hax
+
 
 from sbot import *
 
@@ -61,7 +65,7 @@ class RobotThread(threading.Thread):
                 robot_object.heading = sim.arena.start_headings[self.zone]
                 return robot_object
 
-        six.exec_(open(self.script).read(), {'Robot': robot})
+        exec(open(self.script).read(), {'Robot': robot})
 
 
 threads = []
