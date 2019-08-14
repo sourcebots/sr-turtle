@@ -65,7 +65,7 @@ class RobotThread(threading.Thread):
                 robot_object.heading = sim.arena.start_headings[self.zone]
                 return robot_object
 
-        exec(open(self.script).read(), {'Robot': robot})
+        exec open(self.script).read() in {'Robot': robot}
 
 
 threads = []
