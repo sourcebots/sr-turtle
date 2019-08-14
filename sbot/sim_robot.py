@@ -15,7 +15,7 @@ SPEED_SCALE_FACTOR = 0.02
 MAX_MOTOR_SPEED = 1
 
 GRAB_RADIUS = 0.6
-HALF_GRAB_SECTOR_WIDTH = pi / 4
+HALF_GRAB_SECTOR_WIDTH = pi
 HALF_FOV_WIDTH = pi / 6
 
 GRABBER_OFFSET = 0.25
@@ -63,8 +63,8 @@ class UltrasoundSensor(object):
 
     ULTRASOUND_ANGLES = {
         (6, 7): ('ahead', 0),
-        (8, 9): ('right', math.pi / 2),
-        (10, 11): ('left', -math.pi / 2),
+        (8, 9): ('right', pi / 2),
+        (10, 11): ('left', -pi / 2),
     }
 
     def __init__(self, robot, trigger_pin, echo_pin):
@@ -332,11 +332,18 @@ class SimRobot(GameObject):
             rel_x, rel_y = (o.location[0] - x, o.location[1] - y)
             direction = atan2(rel_y, rel_x)
             rel_heading = (direction - heading)
+            print("Direction:", direction, "Heading:", heading)
 
-            if rel_heading > math.pi:
-                rel_heading -= 2*math.pi
-            elif rel_heading < math.pi:
-                rel_heading += 2*math.pi
+            if rel_heading > pi:
+                rel_heading -= 2 * pi
+            elif rel_heading < -pi:
+                rel_heading += 2 * pi
+
+            dist = hypot(rel_x, rel_y)
+            if o.grabbable:
+                print("grabbable", o.grabbable, "radius", dist,
+                "heading", rel_heading,
+                "grabbed", o.grabbed)
 
             return (o.grabbable and
                     hypot(rel_x, rel_y) <= GRAB_RADIUS and
@@ -370,7 +377,6 @@ class SimRobot(GameObject):
             return True
         else:
             return False
-
 
 class BoardList:
     """A mapping of ``Board``s allowing access by index or identity."""

@@ -7,6 +7,7 @@ class GameObject(object):
     surface_name = None
     marker_id = None
     grabbable = False
+    grabbed = False
 
     def __init__(self, arena):
         self.arena = arena
