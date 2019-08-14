@@ -77,6 +77,9 @@ class Scavengers(Arena):
     ]
 
     missing_token_id = random.randint(0,4)
+    # Center one is always there.
+    if missing_token_id = 2:
+        missing_token_id = random.randint(0,4)
 
     token_locations = possible_token_locations[:missing_token_id] + possible_token_locations[missing_token_id + 1:]
 
