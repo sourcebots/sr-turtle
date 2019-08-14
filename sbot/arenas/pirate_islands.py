@@ -1,4 +1,6 @@
 # Arena definition for 'Pirate Islands', the 2018 SourceBots game.
+from __future__ import division
+
 import random
 from math import pi, cos, sin
 
